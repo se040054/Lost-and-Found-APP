@@ -1,7 +1,11 @@
+import ToggleTheme from "../components/ToggleThemeButton";
 const LoginPage = () => {
   return (
-    <h1>LoginPage</h1>
-  )
-}
+    <>
+      <ToggleTheme></ToggleTheme>
+      <h1>LoginPage</h1>
+    </>
+  );
+};
 
 export default LoginPage;
