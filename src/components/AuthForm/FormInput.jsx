@@ -12,12 +12,14 @@ export default function FormInput({
   invalidPrompt,
   minlength,
   maxlength,
+  useRef,
 }) {
   return (
     <Row>
       <Form.Group as={Col} md="12">
         <Form.Label htmlFor={id}>{label}</Form.Label>
         <Form.Control
+          ref={useRef}
           className="mb-3 input-rows"
           id={id}
           type={type}

@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
-
+import { useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
 import FormContainer from "../components/AuthForm/FormContainer";
@@ -9,66 +8,99 @@ import { useNavigate } from "react-router-dom";
 
 export default function RegisterPageTest() {
   const navigate = useNavigate();
-  const defaultForm = {
-    account: "",
-    password: "",
-    confirmPassword: "",
-    name: "",
+  // const defaultForm = {
+  //   account: "",
+  //   password: "",
+  //   confirmPassword: "",
+  //   name: "",
+  // };
+
+  // const [form, setForm] = useState(defaultForm);
+  const inputRef = {
+    // 注意inputRef.attr.current 不能在渲染期間訪問
+    account: useRef(""),
+    password: useRef(""),
+    confirmPassword: useRef(""),
+    name: useRef(""),
+  };
+  // Create useRef for each input field
+
+  const { login } = useAuth();
+
+  const handleInputOnChange = (attr) => {
+    // setForm({
+    //   ...form,
+    //   [attr]: e.target.value,
+    // });
+
+    // Use refs to handle validation
+    console.log(inputRef);
+    console.log(inputRef.account);
+    console.log(inputRef.account.current);
+    console.log(inputRef.account.current.value);
+    if (attr === "account") checkAccount(inputRef.account.current);
+    if (attr === "name") checkName(inputRef.name.current);
+    if (attr === "password" || attr === "confirmPassword")
+      checkPasswords(
+        inputRef.password.current,
+        inputRef.confirmPassword.current
+      );
   };
 
-  const [form, setForm] = useState(defaultForm);
-  const { login, isLogin } = useAuth();
-  const handleInputOnchange = (attr, e) => {
-    // 每個input的邏輯不同，將onChange 放在呼叫層提供客製化
-    setForm({
-      ...form,
-      [attr]: e.target.value,
-    });
-    if (attr === "account") checkAccount(attr, e);
-    if (attr === "password" || attr === "confirmPassword") checkPassword();
-    if (attr === "name") checkName(attr, e);
-  };
-  const isValid = (node) => {
-    node.classList.remove("is-invalid");
-    node.classList.add("is-valid");
-  };
-  const isInvalid = (node) => {
-    node.classList.add("is-invalid");
-    node.classList.remove("is-valid");
-  };
-  const checkAccount = (attr, e) => {
-    if (e.target.value.length > 3) isValid(e.target);
-    else isInvalid(e.target);
-  };
-  const checkName = (attr, e) => {
-    if (e.target.value.length > 1) isValid(e.target);
-    else isInvalid(e.target);
-  };
-  const checkPassword = () => {
-    // 密碼確認不使用state 是因為無法及時映射 ( setState操作為下次更新渲染造成延遲)
-    const password = document.querySelector("#password");
-    const confirmPassword = document.querySelector("#confirmPassword");
-    if (password.value === confirmPassword.value) {
-      isValid(password);
-      isValid(confirmPassword);
-      return true;
+  const checkAccount = (node) => {
+    if (node.value.length >= 4) {
+      node.classList.remove("is-invalid");
+      node.classList.add("is-valid");
     } else {
-      isInvalid(password);
-      isInvalid(confirmPassword);
-      return false;
+      node.classList.add("is-invalid");
+      node.classList.remove("is-valid");
+    }
+  };
+
+  const checkName = (node) => {
+    if (node.value.length >= 2) {
+      node.classList.remove("is-invalid");
+      node.classList.add("is-valid");
+    } else {
+      node.classList.add("is-invalid");
+      node.classList.remove("is-valid");
+    }
+  };
+
+  const checkPasswords = (passwordNode, confirmPasswordNode) => {
+    if (
+      passwordNode.value === confirmPasswordNode.value &&
+      passwordNode.value.length >= 4
+    ) {
+      passwordNode.classList.remove("is-invalid");
+      passwordNode.classList.add("is-valid");
+      confirmPasswordNode.classList.remove("is-invalid");
+      confirmPasswordNode.classList.add("is-valid");
+    } else {
+      passwordNode.classList.add("is-invalid");
+      passwordNode.classList.remove("is-valid");
+      confirmPasswordNode.classList.add("is-invalid");
+      confirmPasswordNode.classList.remove("is-valid");
     }
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     e.stopPropagation();
-    const { name, account, password, confirmPassword } = form;
+    e.preventDefault();
+    const form = {
+      account: inputRef.account.current.value,
+      password: inputRef.password.current.value,
+      confirmPassword: inputRef.confirmPassword.current.value,
+      name: inputRef.name.current.value,
+    };
+    console.log(form);
+    // Basic form validation
     if (
-      name.length < 2 ||
-      account.length < 4 ||
-      password.length < 4 ||
-      confirmPassword.length < 4 ||
-      !checkPassword()
+      form.name.length < 2 ||
+      form.account.length < 4 ||
+      form.password.length < 4 ||
+      form.confirmPassword.length < 4 ||
+      form.password !== form.confirmPassword
     ) {
       Swal.fire({
         title: "註冊失敗",
@@ -77,6 +109,7 @@ export default function RegisterPageTest() {
       });
       return;
     }
+
     try {
       const status = await login(form);
       if (status === "success") {
@@ -97,7 +130,7 @@ export default function RegisterPageTest() {
         });
       }
     } catch (error) {
-      console.log("錯誤" + error);
+      console.error("錯誤: ", error);
       Swal.fire({
         title: "註冊失敗!",
         text: error.message,
@@ -109,63 +142,68 @@ export default function RegisterPageTest() {
   return (
     <AuthPage>
       <AuthContainer>
-        <FormContainer handleSubmitExtend={handleSubmit}>
-          <AuthTitle>建立您的免費帳戶 </AuthTitle>
+        <FormContainer>
+          <AuthTitle>建立您的免費帳戶</AuthTitle>
           <FormInput
             id="account"
             label="帳號"
             type="text"
             placeholder="請輸入帳號"
-            value={form.account}
-            onChange={(e) => handleInputOnchange("account", e)}
+            onChange={() => handleInputOnChange("account")}
+            useRef={inputRef.account}
             invalidPrompt={"至少包含 4 個以上字元"}
             minlength={4}
             maxlength={16}
-          ></FormInput>
+          />
           <FormInput
             id="password"
             label="密碼"
             type="password"
             placeholder="請輸入密碼"
-            value={form.password}
-            onChange={(e) => handleInputOnchange("password", e)}
+            onChange={() => handleInputOnChange("password")}
+            useRef={inputRef.password}
             invalidPrompt={
-              form.confirmPassword !== form.password
+              inputRef.confirmPassword.current.value !==
+              inputRef.password.current.value
                 ? "密碼不一致"
                 : "至少包含四個以上字元"
             }
             minlength={4}
             maxlength={16}
-            // confirmCheck={confirmCheck}
-          ></FormInput>
+          />
           <FormInput
             id="confirmPassword"
             label="確認密碼"
             type="password"
-            placeholder="確認密碼"
-            value={form.confirmPassword}
-            onChange={(e) => handleInputOnchange("confirmPassword", e)}
+            placeholder="請輸入確認密碼"
+            onChange={() => handleInputOnChange("confirmPassword")}
+            useRef={inputRef.confirmPassword}
             invalidPrompt={
-              form.confirmPassword !== form.password
+              inputRef.confirmPassword.current.value !==
+              inputRef.password.current.value
                 ? "密碼不一致"
                 : "至少包含四個以上字元"
             }
-            // confirmCheck={confirmCheck}
             minlength={4}
             maxlength={16}
-          ></FormInput>
+          />
           <FormInput
             id="name"
             label="用戶名稱"
             type="text"
             placeholder="請輸入用戶名稱"
-            value={form.name}
-            onChange={(e) => handleInputOnchange("name", e)}
-            invalidPrompt={"至少包含 1 個以上字元"}
+            onChange={() => handleInputOnChange("name")}
+            useRef={inputRef.name}
+            invalidPrompt={"至少包含 2 個以上字元"}
             minlength={2}
             maxlength={16}
-          ></FormInput>
-          <AuthButton type="submit" onClick={(e) => handleSubmit(e)}>
+          />
+          <AuthButton
+            type="submit"
+            onClick={(e) => {
+              handleSubmit(e);
+            }}
+          >
             註冊
           </AuthButton>
           <AuthLink>
@@ -217,7 +255,7 @@ const AuthButton = styled.button`
   font-weight: bold;
   padding: 6px 0;
   margin: 2rem 0;
-  &.hover {
+  &:hover {
     cursor: pointer;
   }
 `;
@@ -227,8 +265,8 @@ const AuthTitle = styled.div`
   text-align: center;
   font-size: 24px;
   font-weight: bold;
-  text-align: start;
 `;
+
 const AuthLink = styled.div`
   width: 100%;
   display: flex;
