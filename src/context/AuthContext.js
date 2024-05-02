@@ -18,10 +18,15 @@ export const AuthContextProvider = ({ children }) => {
   const [currentMember, setCurrentMember] = useState(null)
 
   const loginProvider = async (form) => {
-    const status =  await login(form)
-    if (status === 'success'){
+    try {
+      const data = await login(form)
+      if (data.status === 'success') {
+      }
+      return data;
+    } catch (error) {
+      return error
     }
-    return status;
+    
   }
 
   return <AuthContext.Provider value={{

@@ -1,116 +1,194 @@
 import styled from "styled-components";
-import AuthInputContainer from "../components/AuthInput";
-import { useState } from "react";
-
+import {  useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
+import FormContainer from "../components/AuthForm/FormContainer";
+import FormInput from "../components/AuthForm/FormInput";
+import { useNavigate } from "react-router-dom";
 
-const RegisterPage = () => {
-  const defaultForm = {
-    account: "",
-    password: "",
-    confirmPassword: "",
-    name: "",
+export default function RegisterPage() {
+  const navigate = useNavigate();
+  const inputRef = {
+    account: useRef(""),
+    password: useRef(""),
+    confirmPassword: useRef(""),
+    name: useRef(""),
   };
-  const [form, setForm] = useState(defaultForm);
-  const handleInputOnchange = (attr, inputValue) => {
-    setForm({
-      ...form,
-      [attr]: inputValue,
-    });
+  const { login } = useAuth();
+  const handleInputOnChange = (attr) => {
+    if (attr === "account") checkAccount(inputRef.account.current);
+    if (attr === "name") checkName(inputRef.name.current);
+    if (attr === "password" || attr === "confirmPassword")
+      checkPasswords(
+        inputRef.password.current,
+        inputRef.confirmPassword.current
+      );
   };
-
-  const { login, isLogin } = useAuth();
-  const handleSubmit = async (e) => {
-    const { name, account, password, confirmPassword } = form;
-    console.log(name, account);
+  const checkAccount = (node) => {
+    if (node.value.length >= 4) isValid(node);
+    else isInvalid(node);
+  };
+  const checkName = (node) => {
+    if (node.value.length >= 2) isValid(node);
+    else isInvalid(node);
+  };
+  const checkPasswords = (passwordNode, confirmPasswordNode) => {
     if (
-      name.length < 2 ||
-      account.length < 4 ||
-      password.length < 4 ||
-      confirmPassword.length < 4
+      passwordNode.value === confirmPasswordNode.value &&
+      passwordNode.value.length >= 4
+    ) {
+      isValid(passwordNode);
+      isValid(confirmPasswordNode);
+    } else {
+      isInvalid(passwordNode);
+      isInvalid(confirmPasswordNode);
+    }
+  };
+
+  const isValid = (node) => {
+    node.classList.remove("is-invalid");
+    node.classList.add("is-valid");
+  };
+  const isInvalid = (node) => {
+    node.classList.remove("is-valid");
+    node.classList.add("is-invalid");
+  };
+  const handleSubmit = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const form = {
+      account: inputRef.account.current.value,
+      password: inputRef.password.current.value,
+      confirmPassword: inputRef.confirmPassword.current.value,
+      name: inputRef.name.current.value,
+    };
+    if (
+      form.name.length < 2 ||
+      form.account.length < 4 ||
+      form.password.length < 4 ||
+      form.confirmPassword.length < 4 ||
+      form.password !== form.confirmPassword
     ) {
       Swal.fire({
-        title: "註冊失敗",
+        title: "表單資訊不完整",
         text: "欄位未填寫完整",
         icon: "question",
       });
       return;
     }
+
     try {
-      const status = await login(form);
-      if (status === "success") {
+      const data = await login(form);
+      console.log(data);
+      if (data.status === "success") {
         Swal.fire({
           title: "註冊成功!",
-          text: "好",
+          text: "馬上登入",
           icon: "success",
+          timer: 3000,
+          confirmButtonText: "登入",
+          willClose: () => navigate("/login"),
         });
       } else {
         Swal.fire({
-          title: "註冊失敗!",
-          button: "好",
-          icon: "success",
+          // 這個是API返回的失敗
+          title: "註冊失敗",
+          text: data.status.message,
+          icon: "error",
+          confirmButtonText: "關閉",
         });
+        // 因為Provider已經捕捉過異常了 這個資料還是會打進來
+        document.querySelector("#account-feedback-invalid").innerText =
+          "帳號已被註冊";
+        isInvalid(inputRef.account.current);
       }
     } catch (error) {
-      console.log(error);
+      // 這個是API或AuthProvider異常的失敗 通常不會進來
+      Swal.fire({
+        title: "註冊失敗!",
+        text: error.message,
+        icon: "error",
+      });
     }
   };
+
   return (
     <AuthPage>
       <AuthContainer>
-        <AuthTextContainer>
-          <AuthTitle>建立您的免費帳戶 </AuthTitle>
-          <AuthInputContainer
+        <FormContainer>
+          <AuthTitle>建立您的免費帳戶</AuthTitle>
+          <FormInput
+            id="account"
             label="帳號"
             type="text"
             placeholder="請輸入帳號"
-            value={form.account}
-            onChange={(inputValue) =>
-              handleInputOnchange("account", inputValue)
-            }
-          ></AuthInputContainer>
-          <AuthInputContainer
+            onChange={() => handleInputOnChange("account")}
+            useRef={inputRef.account}
+            invalidPrompt={"至少包含 4 個以上字元"}
+            minlength={4}
+            maxlength={16}
+          />
+          <FormInput
+            id="password"
             label="密碼"
             type="password"
             placeholder="請輸入密碼"
-            value={form.password}
-            onChange={(inputValue) =>
-              handleInputOnchange("password", inputValue)
+            onChange={() => handleInputOnChange("password")}
+            useRef={inputRef.password}
+            invalidPrompt={
+              inputRef.confirmPassword.current.value !==
+              inputRef.password.current.value
+                ? "密碼不一致"
+                : "至少包含四個以上字元"
             }
-          ></AuthInputContainer>
-          <AuthInputContainer
+            minlength={4}
+            maxlength={16}
+          />
+          <FormInput
+            id="confirmPassword"
             label="確認密碼"
             type="password"
-            placeholder="確認密碼"
-            value={form.confirmPassword}
-            onChange={(inputValue) =>
-              handleInputOnchange("confirmPassword", inputValue)
+            placeholder="請輸入確認密碼"
+            onChange={() => handleInputOnChange("confirmPassword")}
+            useRef={inputRef.confirmPassword}
+            invalidPrompt={
+              inputRef.confirmPassword.current.value !==
+              inputRef.password.current.value
+                ? "密碼不一致"
+                : "至少包含四個以上字元"
             }
-            isInvalid={() => {
-              return form.password !== form.confirmPassword;
-            }}
-          ></AuthInputContainer>
-          <AuthInputContainer
+            minlength={4}
+            maxlength={16}
+          />
+          <FormInput
+            id="name"
             label="用戶名稱"
             type="text"
             placeholder="請輸入用戶名稱"
-            value={form.name}
-            onChange={(inputValue) => handleInputOnchange("name", inputValue)}
-          ></AuthInputContainer>
-          <AuthButton onClick={handleSubmit}>註冊</AuthButton>
+            onChange={() => handleInputOnChange("name")}
+            useRef={inputRef.name}
+            invalidPrompt={"至少包含 2 個以上字元"}
+            minlength={2}
+            maxlength={16}
+          />
+          <AuthButton
+            type="submit"
+            onClick={(e) => {
+              handleSubmit(e);
+            }}
+          >
+            註冊
+          </AuthButton>
           <AuthLink>
             已經有帳號了? <a href="/login">登入</a>
           </AuthLink>
-        </AuthTextContainer>
+        </FormContainer>
       </AuthContainer>
 
       <AuthBanner>大圖片</AuthBanner>
     </AuthPage>
   );
-};
-
-export default RegisterPage;
+}
 
 const AuthPage = styled.div`
   width: 100%;
@@ -127,6 +205,7 @@ const AuthContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 50%;
+  margin-top: 100px;
 `;
 
 const AuthBanner = styled.div`
@@ -149,25 +228,22 @@ const AuthButton = styled.button`
   font-weight: bold;
   padding: 6px 0;
   margin: 2rem 0;
-  &.hover {
+  &:hover {
     cursor: pointer;
   }
 `;
 
 const AuthTitle = styled.div`
+  margin-bottom:30px;
   width: 100%;
   text-align: center;
   font-size: 24px;
   font-weight: bold;
-  text-align: start;
 `;
+
 const AuthLink = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   text-align: center;
-`;
-
-const AuthTextContainer = styled.div`
-  margin-top: 120px;
 `;

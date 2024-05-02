@@ -32,8 +32,10 @@ export default function FormInput({
           minLength={minlength}
           maxLength={maxlength}
         />
-        <Form.Control.Feedback>長度符合!</Form.Control.Feedback>
-        <Form.Control.Feedback type="invalid">
+        <Form.Control.Feedback id={`${id}-feedback-valid`}>
+          長度符合!
+        </Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid" id={`${id}-feedback-invalid`}>
           {invalidPrompt}
         </Form.Control.Feedback>
       </Form.Group>
