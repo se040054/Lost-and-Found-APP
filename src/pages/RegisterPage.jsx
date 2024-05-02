@@ -1,9 +1,16 @@
-import styled from "styled-components";
-import {  useRef } from "react";
+import {
+  AuthPage,
+  AuthContainer,
+  AuthTitle,
+  AuthBanner,
+  AuthButton,
+  AuthLink,
+} from "../components/Auth/AuthPageStyled";
+import { useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
-import FormContainer from "../components/AuthForm/FormContainer";
-import FormInput from "../components/AuthForm/FormInput";
+import FormContainer from "../components/Auth/FormContainer";
+import FormInput from "../components/Auth/FormInput";
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
@@ -14,7 +21,7 @@ export default function RegisterPage() {
     confirmPassword: useRef(""),
     name: useRef(""),
   };
-  const { login } = useAuth();
+  const { register } = useAuth();
   const handleInputOnChange = (attr) => {
     if (attr === "account") checkAccount(inputRef.account.current);
     if (attr === "name") checkName(inputRef.name.current);
@@ -25,7 +32,7 @@ export default function RegisterPage() {
       );
   };
   const checkAccount = (node) => {
-    if (node.value.length >= 4) isValid(node);
+    if (node.value.length >= 3) isValid(node);
     else isInvalid(node);
   };
   const checkName = (node) => {
@@ -35,7 +42,7 @@ export default function RegisterPage() {
   const checkPasswords = (passwordNode, confirmPasswordNode) => {
     if (
       passwordNode.value === confirmPasswordNode.value &&
-      passwordNode.value.length >= 4
+      passwordNode.value.length >= 3
     ) {
       isValid(passwordNode);
       isValid(confirmPasswordNode);
@@ -64,9 +71,9 @@ export default function RegisterPage() {
     };
     if (
       form.name.length < 2 ||
-      form.account.length < 4 ||
-      form.password.length < 4 ||
-      form.confirmPassword.length < 4 ||
+      form.account.length < 3 ||
+      form.password.length < 3 ||
+      form.confirmPassword.length < 3 ||
       form.password !== form.confirmPassword
     ) {
       Swal.fire({
@@ -78,7 +85,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const data = await login(form);
+      const data = await register(form);
       console.log(data);
       if (data.status === "success") {
         Swal.fire({
@@ -93,7 +100,7 @@ export default function RegisterPage() {
         Swal.fire({
           // 這個是API返回的失敗
           title: "註冊失敗",
-          text: data.status.message,
+          text: data.message,
           icon: "error",
           confirmButtonText: "關閉",
         });
@@ -108,10 +115,10 @@ export default function RegisterPage() {
         title: "註冊失敗!",
         text: error.message,
         icon: "error",
+        confirmButtonText: "繼續",
       });
     }
   };
-
   return (
     <AuthPage>
       <AuthContainer>
@@ -124,8 +131,8 @@ export default function RegisterPage() {
             placeholder="請輸入帳號"
             onChange={() => handleInputOnChange("account")}
             useRef={inputRef.account}
-            invalidPrompt={"至少包含 4 個以上字元"}
-            minlength={4}
+            invalidPrompt={"至少包含 3 個以上字元"}
+            minlength={3}
             maxlength={16}
           />
           <FormInput
@@ -139,9 +146,9 @@ export default function RegisterPage() {
               inputRef.confirmPassword.current.value !==
               inputRef.password.current.value
                 ? "密碼不一致"
-                : "至少包含四個以上字元"
+                : "至少包含3個以上字元"
             }
-            minlength={4}
+            minlength={3}
             maxlength={16}
           />
           <FormInput
@@ -155,9 +162,9 @@ export default function RegisterPage() {
               inputRef.confirmPassword.current.value !==
               inputRef.password.current.value
                 ? "密碼不一致"
-                : "至少包含四個以上字元"
+                : "至少包含3個以上字元"
             }
-            minlength={4}
+            minlength={3}
             maxlength={16}
           />
           <FormInput
@@ -189,61 +196,3 @@ export default function RegisterPage() {
     </AuthPage>
   );
 }
-
-const AuthPage = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-`;
-
-const AuthContainer = styled.div`
-  background-color: ${({ theme }) => theme.containerBackground};
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 50%;
-  margin-top: 100px;
-`;
-
-const AuthBanner = styled.div`
-  display: flex;
-  width: 50%;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const AuthButton = styled.button`
-  border-radius: 5px;
-  background-color: #217c4a;
-  border: none;
-  cursor: pointer;
-  color: white;
-  min-width: 300px;
-  font-family: "Noto Sans TC", sans-serif;
-  font-weight: bold;
-  padding: 6px 0;
-  margin: 2rem 0;
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const AuthTitle = styled.div`
-  margin-bottom:30px;
-  width: 100%;
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-`;
-
-const AuthLink = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-`;

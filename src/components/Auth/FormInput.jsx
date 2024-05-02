@@ -13,31 +13,36 @@ export default function FormInput({
   minlength,
   maxlength,
   useRef,
+  needFeedback = true,
 }) {
   return (
     <Row>
       <Form.Group as={Col} md="12">
         <Form.Label htmlFor={id}>{label}</Form.Label>
         <Form.Control
-          ref={useRef}
+          ref={useRef || null}
           className="mb-3 input-rows"
           id={id}
           type={type}
-          placeholder={placeholder}
-          defaultValue={value}
+          placeholder={placeholder || null}
+          defaultValue={value || null}
           value={value}
           onChange={(e) => {
             onChange?.(e);
           }}
-          minLength={minlength}
-          maxLength={maxlength}
+          minLength={minlength || null}
+          maxLength={maxlength || null}
         />
-        <Form.Control.Feedback id={`${id}-feedback-valid`}>
-          長度符合!
-        </Form.Control.Feedback>
-        <Form.Control.Feedback type="invalid" id={`${id}-feedback-invalid`}>
-          {invalidPrompt}
-        </Form.Control.Feedback>
+        {needFeedback && (
+          <>
+            <Form.Control.Feedback id={`${id}-feedback-valid`}>
+              OK!
+            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid" id={`${id}-feedback-invalid`}>
+              {invalidPrompt}
+            </Form.Control.Feedback>
+          </>
+        )}
       </Form.Group>
     </Row>
   );

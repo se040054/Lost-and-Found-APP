@@ -1,7 +1,7 @@
 // import { useState } from "react";
 import Form from "react-bootstrap/Form";
 
-function FormContainer({
+export default function FormContainer ({
   children,
   //, handleSubmitExtend
 }) {
@@ -27,4 +27,4 @@ function FormContainer({
   );
 }
 
-export default FormContainer;
+

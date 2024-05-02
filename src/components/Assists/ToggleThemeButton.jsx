@@ -2,12 +2,12 @@ import React from "react";
 // import { func, string } from "prop-types";
 import styled from "styled-components";
 
-import { ReactComponent as MoonIcon } from "../assets/moon.svg";
-import { ReactComponent as SunIcon } from "../assets/sun.svg";
+import { ReactComponent as MoonIcon } from "../../assets/moon.svg";
+import { ReactComponent as SunIcon } from "../../assets/sun.svg";
 
-import { useThemeContext } from "../context/ThemeContext";
+import { useThemeContext } from "../../context/ThemeContext";
 
-const ToggleTheme = () => {
+export default function ToggleThemeButton() {
   const { theme, toggleTheme } = useThemeContext();
 
   const ToggleThemeContainer = styled.button.attrs({
@@ -58,11 +58,9 @@ const ToggleTheme = () => {
       <MoonIcon />
     </ToggleThemeContainer>
   );
-};
+}
 
 // ToggleTheme.propTypes = { //檢查用但因為你預設null用不到
 //   theme: string.isRequired,
 //   toggleTheme: func.isRequired,
 // };
-
-export default ToggleTheme;

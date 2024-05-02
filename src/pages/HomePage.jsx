@@ -1,13 +1,7 @@
-import Header from "../components/Header";
+import Header from "../components/Assists/Header";
 
-const HomePage = ({children}) => {
-  return (
-    <>
-      <Header></Header>
-      <h1>HomePage</h1>
-      {children}
-    </>
-  );
+const HomePage = ({ children }) => {
+  return <></>;
 };
 
 export default HomePage;
