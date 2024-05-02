@@ -1,21 +1,26 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HomePage, LoginPage, RegisterPage } from "./pages";
+import { HomePage, LoginPage, RegisterPage ,RegisterPageTest  } from "./pages";
 import React from "react";
 import { GlobalStyles } from "./components/common/global";
 import { ThemeContextProvider } from "./context/ThemeContext";
+import { AuthContextProvider } from "./context/AuthContext";
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <ThemeContextProvider>
-          <GlobalStyles />
-          <Routes>
-            <Route path="home" element={<HomePage />}></Route>
-            <Route path="login" element={<LoginPage />}></Route>
-            <Route path="register" element={<RegisterPage />}></Route>
-            <Route path="*" element={<Navigate to="home" />} />
-          </Routes>
+          <AuthContextProvider>
+            <GlobalStyles />
+            <Routes>
+              <Route path="home" element={<HomePage />}></Route>
+              <Route path="login" element={<LoginPage />}></Route>
+              <Route path="register" element={<RegisterPage />}></Route>
+              <Route path="registerTest" element={<RegisterPageTest />}></Route>
+              <Route path="*" element={<Navigate to="home" />} />
+            </Routes>
+          </AuthContextProvider>
         </ThemeContextProvider>
       </BrowserRouter>
     </div>
