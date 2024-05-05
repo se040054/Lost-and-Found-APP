@@ -1,8 +1,6 @@
-import axios, { formToJSON } from "axios";
+import axios from "axios";
 
-const apiBaseURL = 'http://localhost:3004/api/users'
-
-
+const apiBaseURL = `${process.env.REACT_APP_API_BASE_URL}/users`
 
 export const register = async (form) => {
   try {
@@ -22,3 +20,16 @@ export const login = async (form) => {
   }
 }
 
+export const authToken = async (token) => {
+  try {
+    const {data} = await axios.get(`${apiBaseURL}/authToken`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data 
+  }
+}
