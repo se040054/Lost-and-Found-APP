@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import React from "react";
-import Header from "../components/Assists/Header";
 import HeaderTest from "../components/Assists/HeaderTest";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import { getItems } from "../api/items";
@@ -14,7 +13,8 @@ import {
   Button,
   InputGroup,
   Dropdown,
-  ButtonGroup,
+  Badge,
+  Pagination,
 } from "react-bootstrap";
 
 import { Link } from "react-router-dom";
@@ -36,9 +36,16 @@ const FilterContainer = styled.div`
   width: 50%;
 `;
 
+const BadgesContainerStyled = styled.div`
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 50%;
+`;
+
 const HomePage = () => {
   const [page, setPage] = useState(1);
-  const [category, setCategory] = useState(); // 分類的格式為string，id+name(1金錢財物)，目前eventKey物件會產生問題
+  const [category, setCategory] = useState(null); // 分類的格式為string，id+name(1金錢財物)，目前eventKey物件會產生問題
   const [search, setSearch] = useState(null);
   const [items, setItems] = useState([]);
   // 目前構思，由於items物品不直接更動但會受其他組件影響，Effect放置於父元件
@@ -53,7 +60,12 @@ const HomePage = () => {
     }
     fetchItemsArray();
   }, [category, search, page]);
-
+  const cleanSearch = () => {
+    setSearch(null);
+  };
+  const cleanCategory = () => {
+    setCategory(null);
+  };
   return (
     <>
       {/* 導覽列 */}
@@ -65,13 +77,27 @@ const HomePage = () => {
         <FilterContainer>
           <InputGroup>
             <CategoryFilter category={category} handleSelect={setCategory} />
-            <SearchBar />
+            <SearchBar search={search} handleSubmit={setSearch} />
           </InputGroup>
         </FilterContainer>
+        {/* 顯示篩選 */}
+        {(search || category) && (
+          <BadgesContainerStyled>
+            <BadgesContainer
+              search={search}
+              category={category}
+              cleanSearch={cleanSearch}
+              cleanCategory={cleanCategory}
+            ></BadgesContainer>
+          </BadgesContainerStyled>
+        )}
 
         {/* 物品 */}
         <ItemsContainer items={items}></ItemsContainer>
+
+        {/* <PaginationContainer page={page} handlePage={setPage}></PaginationContainer> */}
       </MainContainerStyled>
+
     </>
   );
 };
@@ -157,11 +183,22 @@ const CategoryFilter = ({ category, handleSelect }) => {
   );
 };
 
-const SearchBar = () => {
+const SearchBar = ({ handleSubmit }) => {
+  const [inputValue, setInputValue] = useState(null); //注意這是輸入欄位變動時更新的數值
   return (
     <>
-      <Form.Control aria-label="" aria-describedby="basic-addon1" />
-      <Button className="btn btn-light btn-outline-success pb-2 px-4">
+      <Form.Control
+        aria-label=""
+        aria-describedby="basic-addon1"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <Button
+        className="btn btn-light btn-outline-success pb-2 px-4"
+        onClick={() => {
+          handleSubmit?.(inputValue);
+        }}
+      >
         <FaSearch />
       </Button>
     </>
@@ -169,19 +206,24 @@ const SearchBar = () => {
 };
 
 const ItemsContainer = ({ items }) => {
+  console.log(items.length + "物件");
   return (
     <CardGroup className="mt-5">
       {/* CardGroup會統一掌管卡片大小 */}
-      <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-4">
-        {/* 這些屬性是一rows 在RWD響應下有幾個元素 */}
-        {items.map((item) => {
-          return (
-            <Col key={item.id}>
-              <ItemsWrapper item={item}></ItemsWrapper>
-            </Col>
-          );
-        })}
-      </Row>
+      {items.length === 0 ? (
+        <h3>沒有符合的項目</h3>
+      ) : (
+        <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-4">
+          {/* 這些屬性是一rows 在RWD響應下有幾個元素 */}
+          {items.map((item) => {
+            return (
+              <Col key={item.id}>
+                <ItemsWrapper item={item}></ItemsWrapper>
+              </Col>
+            );
+          })}
+        </Row>
+      )}
     </CardGroup>
   );
 };
@@ -225,3 +267,61 @@ const ItemsWrapper = ({ item }) => {
     </Link>
   );
 };
+
+const BadgesContainer = ({ search, category, cleanSearch, cleanCategory }) => {
+  return (
+    <div className="d-flex align-items-center mt-4">
+      <h5 className="me-2">搜尋 : </h5>
+      {search && (
+        <h5>
+          <Badge bg="secondary" className="ms-1 me-1">
+            {search}
+            <button
+              type="button"
+              size="lg"
+              class="btn-close  ms-1"
+              aria-label="Close"
+              onClick={() => cleanSearch?.()}
+            ></button>
+          </Badge>
+        </h5>
+      )}
+      {category && (
+        <h5>
+          <Badge bg="secondary">
+            {category.substring(1)}
+            <button
+              size="lg"
+              type="button"
+              class="btn-close ms-1"
+              aria-label="Close"
+              onClick={() => cleanCategory?.()}
+            ></button>
+          </Badge>
+        </h5>
+      )}
+    </div>
+  );
+};
+
+const PaginationContainer  =({page , handlePage})=>{
+   return (
+     <Pagination className="mt-5 mt-5">
+       <Pagination.First />
+       <Pagination.Prev />
+       <Pagination.Item>{1}</Pagination.Item>
+       <Pagination.Ellipsis />
+
+       <Pagination.Item>{10}</Pagination.Item>
+       <Pagination.Item>{11}</Pagination.Item>
+       <Pagination.Item active>{12}</Pagination.Item>
+       <Pagination.Item>{13}</Pagination.Item>
+       <Pagination.Item disabled>{14}</Pagination.Item>
+
+       <Pagination.Ellipsis />
+       <Pagination.Item>{20}</Pagination.Item>
+       <Pagination.Next />
+       <Pagination.Last />
+     </Pagination>
+   );
+}
