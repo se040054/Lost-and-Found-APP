@@ -14,11 +14,13 @@ import {
   InputGroup,
   Dropdown,
   Badge,
-  Pagination,
 } from "react-bootstrap";
 
 import { Link } from "react-router-dom";
 import { getCategories } from "../api/categories";
+import { PaginationControl } from "react-bootstrap-pagination-control";
+
+const ITEM_AMOUNT_PER_PAGE = 12;
 
 const MainContainerStyled = styled.div`
   display: flex;
@@ -48,8 +50,16 @@ const HomePage = () => {
   const [category, setCategory] = useState(null); // 分類的格式為string，id+name(1金錢財物)，目前eventKey物件會產生問題
   const [search, setSearch] = useState(null);
   const [items, setItems] = useState([]);
+  const [totalPage, setTotalPage] = useState(null);
   // 目前構思，由於items物品不直接更動但會受其他組件影響，Effect放置於父元件
+
   useEffect(() => {
+    // 當你新增篩選時 page應該要返回第一頁
+    setPage(1);
+  }, [category, search]); // 注意這裡不追蹤page 以免page頁面被鎖定setPage(1)
+  
+  useEffect(() => {
+    //當新增篩選或換頁時fetch資料
     async function fetchItemsArray() {
       const data = await getItems({
         page,
@@ -57,9 +67,11 @@ const HomePage = () => {
         search,
       });
       setItems(data.apiData.items);
+      setTotalPage(data.apiData.totalPage);
     }
     fetchItemsArray();
   }, [category, search, page]);
+
   const cleanSearch = () => {
     setSearch(null);
   };
@@ -95,9 +107,12 @@ const HomePage = () => {
         {/* 物品 */}
         <ItemsContainer items={items}></ItemsContainer>
 
-        {/* <PaginationContainer page={page} handlePage={setPage}></PaginationContainer> */}
+        <PaginationContainer
+          page={page}
+          onPageChange={setPage}
+          totalPage={totalPage}
+        ></PaginationContainer>
       </MainContainerStyled>
-
     </>
   );
 };
@@ -206,7 +221,6 @@ const SearchBar = ({ handleSubmit }) => {
 };
 
 const ItemsContainer = ({ items }) => {
-  console.log(items.length + "物件");
   return (
     <CardGroup className="mt-5">
       {/* CardGroup會統一掌管卡片大小 */}
@@ -229,11 +243,58 @@ const ItemsContainer = ({ items }) => {
 };
 
 const ItemsWrapper = ({ item }) => {
+  function formatDate(rawDate) {
+    // node 時間已經為UTC+8
+    const date = new Date(rawDate);
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1; // 月份從0開始 要+1
+    const day = date.getUTCDate();
+    return `${year}年${month}月${day}日`;
+  }
+
+  function stringToDate(rawData) {
+    const splitArray = rawData.split("-");
+    return `${splitArray[0]}年${splitArray[1]}月${splitArray[2]}日`;
+  }
   return (
-    <Link to={`/items/${item.id}`}>
-      <Card>
+    <Card>
+      <Card.Header variant="top">
+        {/* variant 會讓radius自動適應 */}
+        {item.Merchant ? (
+          <a href={`/merchants/${item.Merchant.id}`}>
+            <img
+              src={item.Merchant.logo}
+              alt="logo"
+              style={{
+                marginRight: "6px",
+                width: "25px",
+                height: "25px",
+                borderRadius: "50%",
+                zIndex: "2",
+              }}
+            />
+            <small>{item.Merchant.name} </small>
+          </a>
+        ) : (
+          <a href={`/users/${item.User.id}`}>
+            <img
+              src={item.User.avatar}
+              alt="avatar"
+              style={{
+                marginRight: "6px",
+                width: "25px",
+                height: "25px",
+                borderRadius: "50%",
+                zIndex: "2",
+              }}
+            />
+            <small>{item.User.name}</small>
+          </a>
+        )}
+      </Card.Header>
+      <Link to={`/items/${item.id}`}>
         <Card.Img
-          variant="top"
+          variant="none" // 取消圖像的邊角radius
           src={item.photo}
           style={{
             width: "100%",
@@ -248,6 +309,11 @@ const ItemsWrapper = ({ item }) => {
           <Card.Subtitle className="mb-2 text-muted">
             {item.place}
           </Card.Subtitle>
+          <Card.Text>
+            <small className="text-muted ">
+              拾獲日期：{stringToDate(item.findDate)}
+            </small>
+          </Card.Text>
           <Card.Text
             style={{
               overflow: "hidden",
@@ -261,10 +327,11 @@ const ItemsWrapper = ({ item }) => {
           </Card.Text>
         </Card.Body>
         <Card.Footer className="text-end">
-          <small className="text-muted ">拾獲日期：{item.findDate}</small>
+          刊登日期：
+          {formatDate(item.createdAt)}{" "}
         </Card.Footer>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 };
 
@@ -304,24 +371,21 @@ const BadgesContainer = ({ search, category, cleanSearch, cleanCategory }) => {
   );
 };
 
-const PaginationContainer  =({page , handlePage})=>{
-   return (
-     <Pagination className="mt-5 mt-5">
-       <Pagination.First />
-       <Pagination.Prev />
-       <Pagination.Item>{1}</Pagination.Item>
-       <Pagination.Ellipsis />
-
-       <Pagination.Item>{10}</Pagination.Item>
-       <Pagination.Item>{11}</Pagination.Item>
-       <Pagination.Item active>{12}</Pagination.Item>
-       <Pagination.Item>{13}</Pagination.Item>
-       <Pagination.Item disabled>{14}</Pagination.Item>
-
-       <Pagination.Ellipsis />
-       <Pagination.Item>{20}</Pagination.Item>
-       <Pagination.Next />
-       <Pagination.Last />
-     </Pagination>
-   );
-}
+const PaginationContainer = ({ page, onPageChange, totalPage }) => {
+  return (
+    <div className="mt-5">
+      <PaginationControl
+        page={page} // 當前頁數 把state傳進來
+        between={4} // 當前頁數左右要有幾個
+        total={totalPage * ITEM_AMOUNT_PER_PAGE} // 總item數量
+        limit={ITEM_AMOUNT_PER_PAGE} // 一頁有幾個item
+        changePage={(page) => {
+          //setPage
+          onPageChange(page);
+        }}
+        last={true}
+        ellipsis={2} // 有幾個省略頁
+      />
+    </div>
+  );
+};

@@ -17,7 +17,7 @@ function App() {
               <Route path="home" element={<HomePage />}></Route>
               <Route path="login" element={<LoginPage />}></Route>
               <Route path="register" element={<RegisterPage />}></Route>
-              <Route path="*" element={<Navigate to="home" />} />
+              {/* <Route path="*" element={<Navigate to="home" />} /> */}
             </Routes>
           </AuthContextProvider>
         </ThemeContextProvider>
