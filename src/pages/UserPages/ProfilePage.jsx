@@ -17,7 +17,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 
 export default function ProfilePage() {
-  const {currentMember} =useAuth()
+  const { currentMember } = useAuth();
   const userId = useParams().id;
   const [profile, setProfile] = useState();
   const [res, setRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
@@ -47,7 +47,10 @@ export default function ProfilePage() {
       <MainContainerStyled>
         {res === "success" && (
           <>
-            <InformationContainerStyled profile={profile} currentMemberId={currentMember?.id} />
+            <InformationContainer
+              profile={profile}
+              currentMemberId={currentMember?.id}
+            />
             <PropertiesContainer profile={profile} />
           </>
         )}
@@ -60,16 +63,27 @@ export default function ProfilePage() {
 
 const InformationContainer = ({ profile, currentMemberId }) => {
   return (
-    <div>
-      <Image src={profile?.avatar || null} roundedCircle />
+    <InformationContainerStyled>
+      <Image
+        src={profile?.avatar || null}
+        roundedCircle
+        style={{
+          width: "200px",
+        }}
+      />
       <h2 className="mt-5">{profile?.name} </h2>
-      <p class="fst-italic text-start">信箱:{profile?.email || null}</p>
-      <p class="fst-italic text-start">電話:{profile?.phone || null}</p>
-      <p class="fst-italic text-start">居住地:{profile?.county || null}</p>
+      <p class="fst-italic ">信箱:{profile?.email || null}</p>
+      <p class="fst-italic ">電話:{profile?.phone || null}</p>
+      <p class="fst-italic ">居住地:{profile?.county || null}</p>
       {profile?.id === currentMemberId && (
-        <Button className="btn btn-success w-100" href={`/users/${currentMemberId}/put`}>編輯資料</Button>
+        <Button
+          className="btn btn-success w-75"
+          href={`/users/${currentMemberId}/put`}
+        >
+          編輯資料
+        </Button>
       )}
-    </div>
+    </InformationContainerStyled>
   );
 };
 
@@ -95,7 +109,7 @@ const ItemsContainer = ({ items }) => {
   return (
     <CardGroup>
       {items?.length > 0 && (
-        <Row xs={1} sm={1} md={2} lg={2} xl={3} className="g-4">
+        <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-2">
           {items.map((item) => {
             return (
               <Col key={item.id}>
@@ -118,27 +132,20 @@ const ItemWrapper = ({ item }) => {
   return (
     <Link to={`/items/${item.id}`}>
       <Card className="mb-3" style={{ maxWidth: "540px" }}>
-        <Row>
-          <Col md={5} className="m-0 p-0">
-            <Card.Img
-              src={item.photo}
-              className="img-fluid rounded-start"
-              alt="item-photo"
-              style={{
-                height: "160px",
-                objectFit: "cover",
-              }}
-            />
-          </Col>
-          <Col md={7} className="m-0 p-0 ">
-            <Card.Body >
-              <Card.Title>{item.name}</Card.Title>
-              <Card.Text>
-                <small className="text-muted">{item.place}</small>
-              </Card.Text>
-            </Card.Body>
-          </Col>
-        </Row>
+        <Card.Img
+          src={item.photo}
+          alt="item-photo"
+          style={{
+            height: "160px",
+            objectFit: "cover",
+          }}
+        />
+        <Card.Body>
+          <Card.Title>{item.name}</Card.Title>
+          <Card.Text>
+            <small className="text-muted">{item.place}</small>
+          </Card.Text>
+        </Card.Body>
       </Card>
     </Link>
   );
@@ -200,11 +207,20 @@ const MainContainerStyled = styled.div`
   justify-content: start;
   margin: 120px auto;
   width: 80%;
+  @media screen and (max-width: 700px) {
+    flex-direction: column;
+    width: 90%;
+  }
 `;
 
-const InformationContainerStyled = styled(InformationContainer)`
+const InformationContainerStyled = styled.div`
   display: flex;
   flex-direction: column;
-  width: 18%;
-  justify-content: start;
+  width: 25%;
+
+  align-items: center;
+  @media screen and (max-width: 700px) {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 `;
