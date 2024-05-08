@@ -22,7 +22,7 @@ export const login = async (form) => {
 
 export const authToken = async (token) => {
   try {
-    const {data} = await axios.get(`${apiBaseURL}/authToken`, {
+    const { data } = await axios.get(`${apiBaseURL}/authToken`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -30,6 +30,19 @@ export const authToken = async (token) => {
     return data
   } catch (error) {
     console.log(error)
-    return error.response.data 
+    return error.response.data
   }
+}
+
+export const getUser = async (id) => {
+  try {
+    const { data } = await axios.get(`${apiBaseURL}/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+
+
+
 }

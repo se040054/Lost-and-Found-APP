@@ -5,12 +5,12 @@ import {
   AuthBanner,
   AuthButton,
   AuthLink,
-} from "../components/Auth/AuthPageStyled";
+} from "../../components/Auth/AuthPageStyled";
 import { useRef } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
-import FormContainer from "../components/Auth/FormContainer";
-import FormInput from "../components/Auth/FormInput";
+import FormContainer from "../../components/Auth/FormContainer";
+import FormInput from "../../components/Auth/FormInput";
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {

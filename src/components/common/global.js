@@ -8,7 +8,7 @@ export const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  body {
+  html ,body {
     background: ${({ theme }) => theme.body};
     color: ${({ theme }) => theme.text};
     width:100%;

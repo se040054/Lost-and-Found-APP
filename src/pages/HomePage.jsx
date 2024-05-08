@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React from "react";
-import HeaderTest from "../components/Assists/HeaderTest";
+import Header from "../components/Assists/Header";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import { getItems } from "../api/items";
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ import {
   InputGroup,
   Dropdown,
   Badge,
+  Spinner,
 } from "react-bootstrap";
 
 import { Link } from "react-router-dom";
@@ -51,25 +52,36 @@ const HomePage = () => {
   const [search, setSearch] = useState(null);
   const [items, setItems] = useState([]);
   const [totalPage, setTotalPage] = useState(null);
+  const [res, setRes] = useState("loading");
   // 目前構思，由於items物品不直接更動但會受其他組件影響，Effect放置於父元件
 
   useEffect(() => {
     // 當你新增篩選時 page應該要返回第一頁
     setPage(1);
   }, [category, search]); // 注意這裡不追蹤page 以免page頁面被鎖定setPage(1)
-  
+
   useEffect(() => {
     //當新增篩選或換頁時fetch資料
-    async function fetchItemsArray() {
-      const data = await getItems({
-        page,
-        category: category?.substring(0, 1),
-        search,
-      });
-      setItems(data.apiData.items);
-      setTotalPage(data.apiData.totalPage);
-    }
-    fetchItemsArray();
+    const fetchItems = async () => {
+      try {
+        const data = await getItems({
+          page,
+          category: category?.substring(0, 1),
+          search,
+        });
+        if (data.apiData.items.length === 0) {
+          setRes("empty");
+          setItems(null);
+          return;
+        }
+        setItems(data.apiData.items);
+        setTotalPage(data.apiData.totalPage);
+        setRes("success");
+      } catch (error) {
+        setRes("false");
+      }
+    };
+    fetchItems();
   }, [category, search, page]);
 
   const cleanSearch = () => {
@@ -81,7 +93,7 @@ const HomePage = () => {
   return (
     <>
       {/* 導覽列 */}
-      <HeaderTest />
+      <Header />
       {/* 主要部分 */}
       <MainContainerStyled>
         {/* 搜尋 */}
@@ -105,7 +117,7 @@ const HomePage = () => {
         )}
 
         {/* 物品 */}
-        <ItemsContainer items={items}></ItemsContainer>
+        <ItemsContainer items={items} res={res}></ItemsContainer>
 
         <PaginationContainer
           page={page}
@@ -208,25 +220,25 @@ const SearchBar = ({ handleSubmit }) => {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
       />
-      <Button
-        className="btn btn-light btn-outline-success pb-2 px-4"
+      <button // 這邊如果套用react-bootstrap 沒有黑暗模式
+        className="btn  btn-outline-success pb-2 px-4"
         onClick={() => {
           handleSubmit?.(inputValue);
         }}
       >
         <FaSearch />
-      </Button>
+      </button>
     </>
   );
 };
 
-const ItemsContainer = ({ items }) => {
+const ItemsContainer = ({ items, res }) => {
   return (
     <CardGroup className="mt-5">
       {/* CardGroup會統一掌管卡片大小 */}
-      {items.length === 0 ? (
-        <h3>沒有符合的項目</h3>
-      ) : (
+      {res === "empty" && <h3>沒有符合的項目</h3>}
+      {res === "loading " && <Spinner animation="border" variant="success" />}
+      {res === "success" && (
         <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-4">
           {/* 這些屬性是一rows 在RWD響應下有幾個元素 */}
           {items.map((item) => {

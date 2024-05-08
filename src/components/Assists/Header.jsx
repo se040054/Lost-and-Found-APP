@@ -2,7 +2,10 @@ import styled from "styled-components";
 import logo from "../../assets/lost-and-found.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import ToggleThemeButton from "./ToggleThemeButton";
+import Navbar from "react-bootstrap/Navbar";
 import Swal from "sweetalert2";
+import { Container, Nav } from "react-bootstrap";
 export default function Header() {
   const { isLogin, logout, currentMember } = useAuth();
   console.log(currentMember);
@@ -18,81 +21,110 @@ export default function Header() {
       if (result.isConfirmed) {
         logout();
         Swal.fire("已登出!", "", "success");
+        navigate("/home");
       }
     });
   };
 
   return (
-    <StyledHeader>
-      <ActionContainer>
-        <Link to="/home">
-          <Logo></Logo>
-        </Link>
-        <Link to="/home">Lost & Found</Link>
-        {currentMember && (
-          <>
-            <Link className="ms-5 me-1" to="/home">
-              <img
-                src={currentMember.avatar}
-                width="45px"
-                height="45px"
-                alt=""
-                style={{ borderRadius: "50%" }}
-              />
-            </Link>
-            <Link to="/home">{currentMember.name}</Link>
-          </>
-        )}
-      </ActionContainer>
-
-      <ActionContainer>
-        <LinkStyled to="/login">個人檔案</LinkStyled>
-        <LinkStyled to="/login">我的刊登</LinkStyled>
-        <LinkStyled to="/login">我的商家</LinkStyled>
-      </ActionContainer>
-
-      <ActionContainer>
-        {isLogin ? (
-          <button className="btn" onClick={() => handleLogout()}>
-            登出
-          </button>
-        ) : (
-          <>
-            <LinkStyled to="/register">註冊</LinkStyled>
-            <LinkStyled to="/login">登入</LinkStyled>
-          </>
-        )}
-      </ActionContainer>
-    </StyledHeader>
+    <NavBarStyled fixed="top">
+      {/* 左邊資訊個人欄位 */}
+      <Container fluid className="justify-content-start">
+        {/* fluid 消除container自帶的300margin */}
+        {/* 左側 Nav A */}
+        <Nav>
+          <BrandStyled href="/home">
+            <Logo />
+          </BrandStyled>
+          <BrandStyled href="/home">Lost & Found</BrandStyled>
+          {currentMember && (
+            <>
+              <UserStyled href={`/users/${currentMember.id}`}>
+                <img
+                  src={currentMember.avatar}
+                  width="45px"
+                  height="45px"
+                  alt=""
+                  className="ms-3  rounded-circle"
+                />
+              </UserStyled>
+              <UserStyled href={`/users/${currentMember.id}`}>
+                {currentMember.name}
+              </UserStyled>
+            </>
+          )}
+        </Nav>
+      </Container>
+      {/* 中間 連結 */}{" "}
+      <Container fluid className="justify-content-center">
+        <Nav>
+          <LinkStyled
+            to={currentMember ? `/users/${currentMember.id}` : "/login"}
+          >
+            個人檔案
+          </LinkStyled>
+          <LinkStyled
+            to={currentMember ? `/users/${currentMember.id}` : "/login"}
+          >
+            我的刊登
+          </LinkStyled>
+          <LinkStyled
+            to={currentMember ? `/users/${currentMember.id}` : "/login"}
+          >
+            我的商家
+          </LinkStyled>
+        </Nav>
+      </Container>
+      {/* 右邊 登出 輔助 */}
+      <Container fluid className="justify-content-end">
+        <Nav>
+          <ToggleThemeButton />
+          {isLogin ? (
+            <button className="btn" onClick={() => handleLogout()}>
+              登出
+            </button>
+          ) : (
+            <>
+              <LinkStyled to="/register">註冊</LinkStyled>
+              <LinkStyled to="/login">登入</LinkStyled>
+            </>
+          )}
+        </Nav>
+      </Container>
+    </NavBarStyled>
   );
 }
 
-const StyledHeader = styled.header`
-  display: flex;
-  padding: 10px 20px;
+const NavBarStyled = styled(Navbar)`
   background-color: ${(props) => props.theme.headerBackground};
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-  justify-content: space-between;
+`;
+
+const BrandStyled = styled(Navbar.Brand)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  vertical-align: middle;
+  font-size: 36px;
+`;
+
+const UserStyled = styled(Navbar.Brand)`
+  display: flex;
+  align-items: center;
+  width: 100%;
 `;
 
 const Logo = styled.img`
   width: 50px;
   height: 50px;
   content: url(${logo});
-  margin: 0 10px 0 30px;
-`;
-
-const ActionContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  text-align: center;
-  justify-content: center;
 `;
 
 const LinkStyled = styled(Link)`
+  color: ${(props) => props.theme.text};
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   width: 100%;
   padding: 10px 20px;
@@ -100,6 +132,7 @@ const LinkStyled = styled(Link)`
   border-radius: 25px;
   font-weight: bold;
   &:hover {
-    background-color: #f2fffa7c;
+    color: ${(props) => props.theme.hoverText};
+    background-color: #f2fffaa2;
   }
 `;

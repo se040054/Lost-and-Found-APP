@@ -11,14 +11,14 @@ export const AuthPage = styled.div`
 
 
 export const AuthContainer = styled.div`
-  background-color: ${({ theme }) => theme.containerBackground};
+  
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   width: 50%;
-  margin-top: 100px;
+  height: 100%;
 `;
 
 export const AuthBanner = styled.div`
