@@ -119,20 +119,19 @@ const ItemWrapper = ({ item }) => {
     <Link to={`/items/${item.id}`}>
       <Card className="mb-3" style={{ maxWidth: "540px" }}>
         <Row>
-          <Col md={6}>
+          <Col md={5} className="m-0 p-0">
             <Card.Img
               src={item.photo}
               className="img-fluid rounded-start"
               alt="item-photo"
               style={{
-                width: "160px",
                 height: "160px",
                 objectFit: "cover",
               }}
             />
           </Col>
-          <Col md={6}>
-            <Card.Body>
+          <Col md={7} className="m-0 p-0 ">
+            <Card.Body >
               <Card.Title>{item.name}</Card.Title>
               <Card.Text>
                 <small className="text-muted">{item.place}</small>
