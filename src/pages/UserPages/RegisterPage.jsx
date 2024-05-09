@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const inputRef = {
+  const inputRef = { // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback 
     account: useRef(""),
     password: useRef(""),
     confirmPassword: useRef(""),

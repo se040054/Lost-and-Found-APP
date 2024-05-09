@@ -1,6 +1,12 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HomePage, LoginPage, ProfilePage, RegisterPage   } from "./pages";
+import {
+  HomePage,
+  LoginPage,
+  ProfilePage,
+  RegisterPage,
+  EditProfilePage,
+} from "./pages";
 import React from "react";
 import { GlobalStyles } from "./components/common/global";
 import { ThemeContextProvider } from "./context/ThemeContext";
@@ -19,6 +25,10 @@ function App() {
               <Route path="login" element={<LoginPage />}></Route>
               <Route path="register" element={<RegisterPage />}></Route>
               <Route path="users/:id" element={<ProfilePage />}></Route>
+              <Route
+                path="users/:id/edit"
+                element={<EditProfilePage />}
+              ></Route>
               {/* <Route path="*" element={<Navigate to="home" />} /> */}
             </Routes>
           </AuthContextProvider>

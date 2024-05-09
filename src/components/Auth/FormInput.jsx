@@ -14,6 +14,7 @@ export default function FormInput({
   maxlength,
   useRef,
   needFeedback = true,
+  defaultValue,
 }) {
   return (
     <Row>
@@ -25,7 +26,7 @@ export default function FormInput({
           id={id}
           type={type}
           placeholder={placeholder || null}
-          defaultValue={value || null}
+          defaultValue={defaultValue || null}
           value={value}
           onChange={(e) => {
             onChange?.(e);

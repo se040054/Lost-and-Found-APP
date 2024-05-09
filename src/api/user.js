@@ -2,6 +2,19 @@ import axios from "axios";
 
 const apiBaseURL = `${process.env.REACT_APP_API_BASE_URL}/users`
 
+const tokenInstance = axios.create({
+  baseURL: apiBaseURL,
+});
+
+tokenInstance.interceptors.request.use(function (config) {
+  const token = localStorage.getItem('apiToken')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config;
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error);
+});
+
 export const register = async (form) => {
   try {
     const { data } = await axios.post(`${apiBaseURL}/register`, form) // 資料格式為res.data
@@ -45,4 +58,18 @@ export const getUser = async (id) => {
 
 
 
+}
+
+export const editUser = async ({ id, form }) => {
+  try {
+    const { data } = await tokenInstance.put(`${apiBaseURL}/${id}`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data' //因為有file 記得改
+      }
+    })
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
 }

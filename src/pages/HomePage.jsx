@@ -15,12 +15,13 @@ import {
   Dropdown,
   Badge,
   Spinner,
+  Image,
 } from "react-bootstrap";
 
 import { Link } from "react-router-dom";
 import { getCategories } from "../api/categories";
 import { PaginationControl } from "react-bootstrap-pagination-control";
-
+import { defaultAvatar, defaultMerchantLogo } from "../assets/";
 const ITEM_AMOUNT_PER_PAGE = 12;
 
 const MainContainerStyled = styled.div`
@@ -44,9 +45,10 @@ const BadgesContainerStyled = styled.div`
   justify-content: start;
   align-items: center;
   width: 50%;
+  margin-top: 20px;
 `;
 
-const HomePage = () => {
+export default function HomePage() {
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState(null); // 分類的格式為string，id+name(1金錢財物)，目前eventKey物件會產生問題
   const [search, setSearch] = useState(null);
@@ -106,14 +108,14 @@ const HomePage = () => {
         </FilterContainer>
         {/* 顯示篩選 */}
         {(search || category) && (
-          <BadgesContainerStyled>
+          <>
             <BadgesContainer
               search={search}
               category={category}
               cleanSearch={cleanSearch}
               cleanCategory={cleanCategory}
             ></BadgesContainer>
-          </BadgesContainerStyled>
+          </>
         )}
 
         {/* 物品 */}
@@ -127,9 +129,7 @@ const HomePage = () => {
       </MainContainerStyled>
     </>
   );
-};
-
-export default HomePage;
+}
 
 const CategoryFilter = ({ category, handleSelect }) => {
   const [categories, setCategories] = useState([]); // 注意這裡的分類是選單要呈現的分類而非你要操作的分類
@@ -274,8 +274,8 @@ const ItemsWrapper = ({ item }) => {
         {/* variant 會讓radius自動適應 */}
         {item.Merchant ? (
           <a href={`/merchants/${item.Merchant.id}`}>
-            <img
-              src={item.Merchant.logo}
+            <Image
+              src={item.Merchant.logo || defaultMerchantLogo}
               alt="logo"
               style={{
                 marginRight: "6px",
@@ -289,8 +289,8 @@ const ItemsWrapper = ({ item }) => {
           </a>
         ) : (
           <a href={`/users/${item.User.id}`}>
-            <img
-              src={item.User.avatar}
+            <Image
+              src={item.User.avatar || defaultAvatar}
               alt="avatar"
               style={{
                 marginRight: "6px",
@@ -300,6 +300,7 @@ const ItemsWrapper = ({ item }) => {
                 zIndex: "2",
               }}
             />
+
             <small>{item.User.name}</small>
           </a>
         )}
@@ -349,7 +350,7 @@ const ItemsWrapper = ({ item }) => {
 
 const BadgesContainer = ({ search, category, cleanSearch, cleanCategory }) => {
   return (
-    <div className="d-flex align-items-center mt-4">
+    <BadgesContainerStyled>
       <h5 className="me-2">搜尋 : </h5>
       {search && (
         <h5>
@@ -379,7 +380,7 @@ const BadgesContainer = ({ search, category, cleanSearch, cleanCategory }) => {
           </Badge>
         </h5>
       )}
-    </div>
+    </BadgesContainerStyled>
   );
 };
 

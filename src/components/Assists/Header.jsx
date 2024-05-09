@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import logo from "../../assets/lost-and-found.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import ToggleThemeButton from "./ToggleThemeButton";
 import Navbar from "react-bootstrap/Navbar";
 import Swal from "sweetalert2";
-import { Container, Nav } from "react-bootstrap";
+import { Container, Image, Nav } from "react-bootstrap";
+import { defaultAvatar, webLogo } from "../../assets";
 export default function Header() {
   const { isLogin, logout, currentMember } = useAuth();
   console.log(currentMember);
@@ -40,12 +40,17 @@ export default function Header() {
           {currentMember && (
             <>
               <UserStyled href={`/users/${currentMember.id}`}>
-                <img
-                  src={currentMember.avatar}
-                  width="45px"
-                  height="45px"
-                  alt=""
+                <Image
+                  alt="avatar"
+                  id="avatar-preview"
                   className="ms-3  rounded-circle"
+                  src={currentMember.avatar || defaultAvatar}
+                  roundedCircle
+                  style={{
+                    width: "45px",
+                    height: "45px",
+                    objectFit: "center",
+                  }}
                 />
               </UserStyled>
               <UserStyled href={`/users/${currentMember.id}`}>
@@ -79,7 +84,7 @@ export default function Header() {
       <Container fluid className="justify-content-end">
         <Nav>
           <ToggleThemeButton />
-          {isLogin ? (
+          {isLogin === "success" ? (
             <button className="btn" onClick={() => handleLogout()}>
               登出
             </button>
@@ -117,7 +122,7 @@ const UserStyled = styled(Navbar.Brand)`
 const Logo = styled.img`
   width: 50px;
   height: 50px;
-  content: url(${logo});
+  content: url(${webLogo});
 `;
 
 const LinkStyled = styled(Link)`

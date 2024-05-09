@@ -15,11 +15,11 @@ import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const defaultForm = {
+  const defaultForm = { 
     account: "",
     password: "",
   };
-  const [form, setForm] = useState(defaultForm);
+  const [form, setForm] = useState(defaultForm); // 不需要節點 所以只需用state
   const { login } = useAuth();
   const handleInputOnChange = (attr, inputValue) => {
     setForm({ ...form, [attr]: inputValue });

@@ -15,7 +15,7 @@ import {
   Tabs,
 } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-
+import { defaultAvatar } from "../../assets";
 export default function ProfilePage() {
   const { currentMember } = useAuth();
   const userId = useParams().id;
@@ -65,20 +65,18 @@ const InformationContainer = ({ profile, currentMemberId }) => {
   return (
     <InformationContainerStyled>
       <Image
-        src={profile?.avatar || null}
+        src={profile?.avatar || defaultAvatar}
         roundedCircle
-        style={{
-          width: "200px",
-        }}
+        width="200px"
       />
       <h2 className="mt-5">{profile?.name} </h2>
-      <p class="fst-italic ">信箱:{profile?.email || null}</p>
-      <p class="fst-italic ">電話:{profile?.phone || null}</p>
-      <p class="fst-italic ">居住地:{profile?.county || null}</p>
+      <p className="fst-italic ">信箱:{profile?.email || "無"}</p>
+      <p className="fst-italic ">電話:{profile?.phone ||  "無"}</p>
+      <p className="fst-italic ">居住地:{profile?.county ||  "無"}</p>
       {profile?.id === currentMemberId && (
         <Button
           className="btn btn-success w-75"
-          href={`/users/${currentMemberId}/put`}
+          href={`/users/${currentMemberId}/edit`}
         >
           編輯資料
         </Button>

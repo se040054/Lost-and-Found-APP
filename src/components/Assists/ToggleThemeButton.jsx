@@ -2,8 +2,7 @@ import React from "react";
 // import { func, string } from "prop-types";
 import styled from "styled-components";
 
-import { ReactComponent as MoonIcon } from "../../assets/moon.svg";
-import { ReactComponent as SunIcon } from "../../assets/sun.svg";
+import { MoonIcon, SunIcon } from "../../assets";
 
 import { useThemeContext } from "../../context/ThemeContext";
 
