@@ -197,7 +197,7 @@ const MerchantsContainer = ({ merchants }) => {
   return (
     <CardGroup>
       {merchants?.length > 0 && (
-        <Row xs={1} sm={2} md={2} lg={2} xl={2} className="g-4">
+        <Row xs={1} sm={2} md={2} lg={2} xl={2} className="g-4 w-100">
           {merchants.map((merchant) => {
             return (
               <Col key={merchant.id}>

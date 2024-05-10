@@ -6,6 +6,7 @@ import {
   ProfilePage,
   RegisterPage,
   EditProfilePage,
+  EditPasswordPage,
 } from "./pages";
 import React from "react";
 import { GlobalStyles } from "./components/common/global";
@@ -28,6 +29,10 @@ function App() {
               <Route
                 path="users/:id/edit"
                 element={<EditProfilePage />}
+              ></Route>
+              <Route
+                path="users/:id/editPassword"
+                element={<EditPasswordPage />}
               ></Route>
               {/* <Route path="*" element={<Navigate to="home" />} /> */}
             </Routes>

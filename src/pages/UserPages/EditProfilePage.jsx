@@ -5,12 +5,13 @@ import { AuthButton, AuthTitle } from "../../components/Auth/AuthPageStyled";
 import Header from "../../components/Assists/Header";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { defaultAvatar } from "../../assets";
 import FileInput from "../../components/Auth/ImageInput";
 import { rules } from "../../utils/inputRules";
 import { editUser } from "../../api/user";
 import Swal from "sweetalert2";
+import { Button, Container } from "react-bootstrap";
 export default function EditProfilePage() {
   const { currentMember, isLogin } = useAuth();
   const [getMember, setGetMember] = useState("loading"); // 避免Effect先檢測
@@ -21,11 +22,11 @@ export default function EditProfilePage() {
     if (isLogin === "success") setGetMember("success");
     if (getMember === "success") {
       if (Number(userId) !== Number(currentMember.id)) {
-        // 注意型別
+        // 檢測修改對象是否為登入者，注意型別
         navigate(`/users/${currentMember.id}/edit`);
       }
     }
-  }, [currentMember, isLogin, userId, getMember]);
+  }, [currentMember, isLogin, userId, getMember,navigate]);
 
   const inputRef = {
     // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback
@@ -109,9 +110,9 @@ export default function EditProfilePage() {
       return;
     } else if (!hasChange(form)) {
       Swal.fire({
-        title: "修改失敗!",
-        text: "未進行修改",
-        icon: "error",
+        title: "未進行修改!",
+        text: "資料未變動",
+        icon: "info",
         confirmButtonText: "繼續",
       });
       return;
@@ -139,7 +140,11 @@ export default function EditProfilePage() {
       }
     }
   };
-
+  const handleCancel = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    navigate(`/users/${userId}`);
+  };
   return (
     <>
       <Header></Header>
@@ -197,9 +202,25 @@ export default function EditProfilePage() {
               minlength={rules.county.min}
               maxlength={rules.county.max}
             />
-            <StyledAuthButton onClick={(e) => handleSubmit(e)}>
-              確認送出
-            </StyledAuthButton>
+            <Container className="text-center">
+              <Link to={`/users/${userId}/editPassword`}>
+                <h5 className="btn btn-warning ">我要修改密碼</h5>
+              </Link>
+            </Container>
+            <Container fluid className="d-flex justify-content-between">
+              <StyledAuthButton
+                className="btn btn-secondary"
+                onClick={(e) => handleCancel(e)}
+              >
+                取消
+              </StyledAuthButton>
+              <StyledAuthButton
+                className="btn-success"
+                onClick={(e) => handleSubmit(e)}
+              >
+                確認送出
+              </StyledAuthButton>
+            </Container>
           </FormContainer>
         )}
       </EditContainer>
@@ -229,7 +250,7 @@ const EditContainer = styled.div`
   height: 100%;
 `;
 
-const StyledAuthButton = styled(AuthButton)`
+const StyledAuthButton = styled(Button)`
   display: block;
-  margin: 20px auto;
+  margin: 20px 0;
 `;

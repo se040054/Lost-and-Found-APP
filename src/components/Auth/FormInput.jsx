@@ -10,6 +10,7 @@ export default function FormInput({
   placeholder,
   onChange,
   invalidPrompt,
+  invalidPrompt2,
   minlength,
   maxlength,
   useRef,
@@ -42,6 +43,14 @@ export default function FormInput({
             <Form.Control.Feedback type="invalid" id={`${id}-feedback-invalid`}>
               {invalidPrompt}
             </Form.Control.Feedback>
+            {invalidPrompt2 && (
+              <Form.Control.Feedback
+                type="invalid"
+                id={`${id}-feedback-invalid`}
+              >
+                {invalidPrompt2}
+              </Form.Control.Feedback>
+            )}
           </>
         )}
       </Form.Group>

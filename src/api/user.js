@@ -29,6 +29,7 @@ export const login = async (form) => {
     const { data } = await axios.post(`${apiBaseURL}/login`, form) // 資料格式為res.data
     return data;
   } catch (error) {
+    console.log(error)
     return error.response.data //HTTP協議下失敗與成功的API返回架構不同 
   }
 }
@@ -66,6 +67,17 @@ export const editUser = async ({ id, form }) => {
       headers: {
         'Content-Type': 'multipart/form-data' //因為有file 記得改
       }
+    })
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+}
+
+export const editPassword = async ({ id, form }) => {
+  try {
+    const { data } = await tokenInstance.put(`${apiBaseURL}/${id}/password`, form, {
     })
     return data
   } catch (error) {

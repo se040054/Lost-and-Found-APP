@@ -6,7 +6,7 @@ import {
   AuthButton,
   AuthLink,
 } from "../../components/Auth/AuthPageStyled";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 import FormContainer from "../../components/Auth/FormContainer";
@@ -15,13 +15,15 @@ import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const inputRef = { // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback 
+  const inputRef = {
+    // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback
     account: useRef(""),
     password: useRef(""),
     confirmPassword: useRef(""),
     name: useRef(""),
   };
   const { register } = useAuth();
+  const [passwordMatch, setPasswordMatch] = useState(null);
   const handleInputOnChange = (attr) => {
     if (attr === "account") checkAccount(inputRef.account.current);
     if (attr === "name") checkName(inputRef.name.current);
@@ -50,6 +52,9 @@ export default function RegisterPage() {
       isInvalid(passwordNode);
       isInvalid(confirmPasswordNode);
     }
+    if (passwordNode.value === confirmPasswordNode.value)
+      setPasswordMatch(true);
+    else setPasswordMatch(false);
   };
 
   const isValid = (node) => {
@@ -142,12 +147,7 @@ export default function RegisterPage() {
             placeholder="請輸入密碼"
             onChange={() => handleInputOnChange("password")}
             useRef={inputRef.password}
-            invalidPrompt={
-              inputRef.confirmPassword.current.value !==
-              inputRef.password.current.value
-                ? "密碼不一致"
-                : "至少包含3個以上字元"
-            }
+            invalidPrompt={!passwordMatch ? "密碼不一致" : "至少包含3個以上字元"}
             minlength={3}
             maxlength={16}
           />
@@ -158,12 +158,7 @@ export default function RegisterPage() {
             placeholder="請輸入確認密碼"
             onChange={() => handleInputOnChange("confirmPassword")}
             useRef={inputRef.confirmPassword}
-            invalidPrompt={
-              inputRef.confirmPassword.current.value !==
-              inputRef.password.current.value
-                ? "密碼不一致"
-                : "至少包含3個以上字元"
-            }
+            invalidPrompt={!passwordMatch ? "密碼不一致" : "至少包含3個以上字元"}
             minlength={3}
             maxlength={16}
           />
