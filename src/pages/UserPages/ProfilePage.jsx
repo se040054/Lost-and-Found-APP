@@ -16,22 +16,25 @@ import {
 } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import { defaultAvatar } from "../../assets";
+import { getMyFavorites } from "../../api/favorites";
 export default function ProfilePage() {
   const { currentMember } = useAuth();
   const userId = useParams().id;
   const [profile, setProfile] = useState();
   const [res, setRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
+  const [favorites, setFavorites] = useState([]);
   useEffect(() => {
     const FetchUserData = async () => {
       try {
-        const res = await getUser(userId);
-        if (!res.apiData) {
+        const data = await getUser(userId);
+        if (!data.apiData) {
           setProfile(null);
           setRes("false");
           return;
         }
-        setProfile(res.apiData);
-        setRes("success");
+        setProfile(data.apiData);
+        setRes("step1"); //加載完個人資料
+        console.log(res, "加載完1階段");
       } catch (error) {
         console.log(error);
         setRes("false");
@@ -40,7 +43,35 @@ export default function ProfilePage() {
     };
     FetchUserData();
   }, [userId]);
+  useEffect(() => {
+    // 效果要分開使用，因為setRes 在一次渲染只會改變一次 放在一起寫會導致res錯亂
+    if (res === "step1") {
+      //加載完個人資料後加載收藏
+      if (profile?.id === currentMember?.id) {
+        try {
+          const fetchFavorites = async () => {
+            const data = await getMyFavorites();
+            setFavorites(data.apiData);
+            setRes("success");
+            console.log(res, "加載完2階段");
+          };
 
+          fetchFavorites();
+        } catch (error) {
+          console.log(error);
+          setFavorites(null);
+          setRes("false");
+          return error;
+        }
+      } else {
+        setRes("success");
+      }
+    }
+    if (res === "false") {
+      console.log(profile, favorites || null);
+    }
+    console.log(res);
+  }, [profile]);
   return (
     <>
       <Header />
@@ -51,7 +82,11 @@ export default function ProfilePage() {
               profile={profile}
               currentMemberId={currentMember?.id}
             />
-            <PropertiesContainer profile={profile} />
+            <PropertiesContainer
+              profile={profile}
+              showFavorite={currentMember?.id === profile?.id}
+              favorites={favorites || null}
+            />
           </>
         )}
         {res === "false" && <h1>找不到用戶</h1>}
@@ -71,8 +106,8 @@ const InformationContainer = ({ profile, currentMemberId }) => {
       />
       <h2 className="mt-5">{profile?.name} </h2>
       <p className="fst-italic ">信箱:{profile?.email || "無"}</p>
-      <p className="fst-italic ">電話:{profile?.phone ||  "無"}</p>
-      <p className="fst-italic ">居住地:{profile?.county ||  "無"}</p>
+      <p className="fst-italic ">電話:{profile?.phone || "無"}</p>
+      <p className="fst-italic ">居住地:{profile?.county || "無"}</p>
       {profile?.id === currentMemberId && (
         <Button
           className="btn btn-success w-75"
@@ -85,19 +120,28 @@ const InformationContainer = ({ profile, currentMemberId }) => {
   );
 };
 
-const PropertiesContainer = ({ profile }) => {
+const PropertiesContainer = ({ profile, showFavorite, favorites }) => {
   return (
     <div className="d-flex  flex-column ms-5 w-75">
       <Tabs id="uncontrolled-tab-example" className="mb-3">
-        <Tab eventKey="items" title="物品">
+        <Tab eventKey="items" title="刊登物品">
           {/* 注意這個Tab不能抽離出Tabs 除非用其他組件 */}
           <ItemsContainer items={profile?.Items}></ItemsContainer>
         </Tab>
-        <Tab eventKey="merchants" title="商家">
+        <Tab eventKey="merchants" title="商家列表">
           <MerchantsContainer
             merchants={profile?.Merchants}
           ></MerchantsContainer>
         </Tab>
+        {showFavorite && (
+          <Tab eventKey="favorites" title="收藏列表">
+            {favorites.length < 1 ? (
+              <h1>空空如也~ </h1>
+            ) : (
+              <ItemsContainer items={favorites}></ItemsContainer>
+            )}
+          </Tab>
+        )}
       </Tabs>
     </div>
   );
@@ -107,7 +151,7 @@ const ItemsContainer = ({ items }) => {
   return (
     <CardGroup>
       {items?.length > 0 && (
-        <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-2">
+        <Row xs={1} sm={2} md={3} lg={4} xl={5}  className="g-2 w-100">
           {items.map((item) => {
             return (
               <Col key={item.id}>

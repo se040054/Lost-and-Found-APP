@@ -8,7 +8,6 @@ import { Container, Image, Nav } from "react-bootstrap";
 import { defaultAvatar, webLogo } from "../../assets";
 export default function Header() {
   const { isLogin, logout, currentMember } = useAuth();
-  console.log(currentMember);
   const navigate = useNavigate();
   const handleLogout = () => {
     Swal.fire({

@@ -33,7 +33,6 @@ export const AuthContextProvider = ({ children }) => {
       const data = await login(form)
       if (data.status === 'success') {
         const tempPayload = jose.decodeJwt(data.apiData.jwtToken)
-        console.log('tempPayload', tempPayload)
         if (tempPayload) {
           setIsLogin("success")
           setPayload(tempPayload)

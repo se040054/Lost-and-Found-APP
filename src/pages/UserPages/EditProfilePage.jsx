@@ -20,7 +20,10 @@ export default function EditProfilePage() {
     if (isLogin === "false") setGetMember("false");
     if (isLogin === "success") setGetMember("success");
     if (getMember === "success") {
-      if (Number(userId) !== Number(currentMember.id)) alert("非本人"); // 注意型別
+      if (Number(userId) !== Number(currentMember.id)) {
+        // 注意型別
+        navigate(`/users/${currentMember.id}/edit`);
+      }
     }
   }, [currentMember, isLogin, userId, getMember]);
 
