@@ -11,7 +11,7 @@ tokenInstance.interceptors.request.use(function (config) {
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config;
 }, function (error) {
-  // 对请求错误做些什么
+ 
   return Promise.reject(error);
 });
 
@@ -56,9 +56,6 @@ export const getUser = async (id) => {
     console.log(error)
     return error.response.data
   }
-
-
-
 }
 
 export const editUser = async ({ id, form }) => {

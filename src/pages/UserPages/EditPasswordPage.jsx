@@ -19,7 +19,7 @@ export default function EditPasswordPage() {
   const userId = useParams().id;
   const navigate = useNavigate();
   useEffect(() => {
-    if (isLogin === "false") setGetMember("false");
+    if (isLogin === "false") navigate('/login')
     if (isLogin === "success") setGetMember("success");
     if (getMember === "success") {
       if (Number(userId) !== Number(currentMember.id)) {
@@ -27,6 +27,7 @@ export default function EditPasswordPage() {
         navigate(`/users/${currentMember.id}/edit`);
       }
     }
+    
   }, [currentMember, isLogin, userId, getMember, navigate]);
   const inputRef = {
     // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback
@@ -114,7 +115,7 @@ export default function EditPasswordPage() {
             text: "即將跳轉頁面",
             timer: 3000,
             confirmButtonText: "繼續",
-            willClose: navigate(`/users/${userId}`),
+            willClose: () => navigate(`/users/${userId}`),
           });
         } else {
           Swal.fire({

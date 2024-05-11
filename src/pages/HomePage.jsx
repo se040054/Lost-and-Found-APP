@@ -2,6 +2,7 @@ import styled from "styled-components";
 import React from "react";
 import Header from "../components/Assists/Header";
 import { FaSearch, FaFilter } from "react-icons/fa";
+import { FiPlusCircle } from "react-icons/fi";
 import { getItems } from "../api/items";
 import { useEffect, useState } from "react";
 import {
@@ -16,6 +17,7 @@ import {
   Badge,
   Spinner,
   Image,
+  Container,
 } from "react-bootstrap";
 
 import { Link } from "react-router-dom";
@@ -37,7 +39,6 @@ const FilterContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50%;
 `;
 
 const BadgesContainerStyled = styled.div`
@@ -46,6 +47,13 @@ const BadgesContainerStyled = styled.div`
   align-items: center;
   width: 50%;
   margin-top: 20px;
+`;
+
+const CreateContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  font-size: 1rem;
+  align-items: center;
 `;
 
 export default function HomePage() {
@@ -99,13 +107,37 @@ export default function HomePage() {
       {/* 主要部分 */}
       <MainContainerStyled>
         {/* 搜尋 */}
-
-        <FilterContainer>
-          <InputGroup>
-            <CategoryFilter category={category} handleSelect={setCategory} />
-            <SearchBar search={search} handleSubmit={setSearch} />
-          </InputGroup>
-        </FilterContainer>
+        <Container fluid>
+          <Row>
+            <Col className="col-md-5 offset-md-3">
+              <FilterContainer>
+                <InputGroup>
+                  <CategoryFilter
+                    category={category}
+                    handleSelect={setCategory}
+                  />
+                  <SearchBar search={search} handleSubmit={setSearch} />
+                </InputGroup>
+              </FilterContainer>
+            </Col>
+            <Col className="col-md-3 offset-md-1">
+              <CreateContainer>
+                <Link to="/merchants/post">
+                  <Button variant="success">
+                    <FiPlusCircle className="me-1 mb-1" size="1rem" />
+                    刊登物品
+                  </Button>
+                </Link>
+                <Link to="/merchants/post">
+                  <Button variant="success">
+                    <FiPlusCircle className="me-1 mb-1" size="1rem" />
+                    申請商家
+                  </Button>
+                </Link>
+              </CreateContainer>
+            </Col>
+          </Row>
+        </Container>
         {/* 顯示篩選 */}
         {(search || category) && (
           <>
@@ -211,7 +243,7 @@ const CategoryFilter = ({ category, handleSelect }) => {
 };
 
 const SearchBar = ({ handleSubmit }) => {
-  const [inputValue, setInputValue] = useState(null); //注意這是輸入欄位變動時更新的數值
+  const [inputValue, setInputValue] = useState(""); //注意這是輸入欄位變動時更新的數值
   return (
     <>
       <Form.Control

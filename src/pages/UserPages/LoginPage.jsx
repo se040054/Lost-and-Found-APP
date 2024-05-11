@@ -61,12 +61,10 @@ export default function LoginPage() {
     } catch (error) {
       // 通常不會進來這裡，例外異常
       Swal.fire({
-        title: "登入成功!",
-        text: "即將跳轉至首頁",
-        icon: "success",
-        timer: 3000,
-        confirmButtonText: "進入首頁",
-        willClose: () => navigate("/home"),
+        title: "登入失敗!",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "繼續",
       });
     }
   };

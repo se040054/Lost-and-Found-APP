@@ -28,7 +28,7 @@ export default function Header() {
   return (
     <NavBarStyled fixed="top">
       {/* 左邊資訊個人欄位 */}
-      <Container fluid className="justify-content-start">
+      <Container className="justify-content-start">
         {/* fluid 消除container自帶的300margin */}
         {/* 左側 Nav A */}
         <Nav>
@@ -60,7 +60,7 @@ export default function Header() {
         </Nav>
       </Container>
       {/* 中間 連結 */}{" "}
-      <Container fluid className="justify-content-center">
+      <Container className="justify-content-center">
         <Nav>
           <LinkStyled
             to={currentMember ? `/users/${currentMember.id}` : "/login"}
@@ -80,7 +80,7 @@ export default function Header() {
         </Nav>
       </Container>
       {/* 右邊 登出 輔助 */}
-      <Container fluid className="justify-content-end">
+      <Container className="justify-content-end">
         <Nav>
           <ToggleThemeButton />
           {isLogin === "success" ? (
@@ -109,7 +109,7 @@ const BrandStyled = styled(Navbar.Brand)`
   align-items: center;
   width: 100%;
   vertical-align: middle;
-  font-size: 36px;
+  font-size: 1.4rem;
 `;
 
 const UserStyled = styled(Navbar.Brand)`
@@ -132,7 +132,7 @@ const LinkStyled = styled(Link)`
   align-items: center;
   width: 100%;
   padding: 10px 20px;
-  font-size: 22px;
+  font-size: 1.2rem;
   border-radius: 25px;
   font-weight: bold;
   &:hover {

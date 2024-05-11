@@ -13,12 +13,12 @@ import { editUser } from "../../api/user";
 import Swal from "sweetalert2";
 import { Button, Container } from "react-bootstrap";
 export default function EditProfilePage() {
-  const { currentMember, isLogin } = useAuth();
+  const { currentMember, isLogin } = useAuth(); // 注意currentMember是異步，可能導致使用者被檢測未登入所以下面掛載loading
   const [getMember, setGetMember] = useState("loading"); // 避免Effect先檢測
   const userId = useParams().id;
   const navigate = useNavigate();
   useEffect(() => {
-    if (isLogin === "false") setGetMember("false");
+    if (isLogin === "false") navigate("/login");
     if (isLogin === "success") setGetMember("success");
     if (getMember === "success") {
       if (Number(userId) !== Number(currentMember.id)) {
@@ -26,7 +26,7 @@ export default function EditProfilePage() {
         navigate(`/users/${currentMember.id}/edit`);
       }
     }
-  }, [currentMember, isLogin, userId, getMember,navigate]);
+  }, [currentMember, isLogin, userId, getMember, navigate]);
 
   const inputRef = {
     // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback
@@ -122,13 +122,23 @@ export default function EditProfilePage() {
         console.log("即將送出表單" + data.status, data.apiData);
         // 送出資料後 會收到新的token 要更新payload，網站的header profile等等才會變化
         localStorage.setItem("apiToken", data.apiData.jwtToken);
-        Swal.fire({
-          title: "修改成功!",
-          text: "即將跳轉頁面",
-          timer: 3000,
-          confirmButtonText: "繼續",
-          willClose: navigate(`/users/${userId}`),
-        });
+        if (data.status === "success") {
+          Swal.fire({
+            title: "修改成功!",
+            text: "即將跳轉頁面",
+            timer: 3000,
+            confirmButtonText: "繼續",
+            willClose: () => navigate(`/users/${userId}`),
+          });
+        } else {
+          Swal.fire({
+            // 這個是API返回的失敗
+            title: "註冊失敗",
+            text: data.message,
+            icon: "error",
+            confirmButtonText: "關閉",
+          });
+        }
       } catch (error) {
         Swal.fire({
           title: "修改失敗!",

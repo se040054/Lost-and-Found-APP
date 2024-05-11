@@ -16,6 +16,7 @@ export default function FormInput({
   useRef,
   needFeedback = true,
   defaultValue,
+  asTextarea,
 }) {
   return (
     <Row>
@@ -25,6 +26,7 @@ export default function FormInput({
           ref={useRef || null}
           className="mb-3 input-rows"
           id={id}
+          as={asTextarea && "textarea"}
           type={type}
           placeholder={placeholder || null}
           defaultValue={defaultValue || null}

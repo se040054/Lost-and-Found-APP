@@ -15,7 +15,7 @@ import {
   Tabs,
 } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import { defaultAvatar } from "../../assets";
+import { defaultAvatar, defaultMerchantLogo } from "../../assets";
 import { getMyFavorites } from "../../api/favorites";
 export default function ProfilePage() {
   const { currentMember } = useAuth();
@@ -24,7 +24,7 @@ export default function ProfilePage() {
   const [res, setRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
   const [favorites, setFavorites] = useState([]);
   useEffect(() => {
-    const FetchUserData = async () => {
+    const fetchUserData = async () => {
       try {
         const data = await getUser(userId);
         if (!data.apiData) {
@@ -41,7 +41,7 @@ export default function ProfilePage() {
         return error;
       }
     };
-    FetchUserData();
+    fetchUserData();
   }, [userId]);
   useEffect(() => {
     // 效果要分開使用，因為setRes 在一次渲染只會改變一次 放在一起寫會導致res錯亂
@@ -84,7 +84,7 @@ export default function ProfilePage() {
             />
             <PropertiesContainer
               profile={profile}
-              showFavorite={currentMember?.id === profile?.id}
+              showFavorite={currentMember?.id === profile.id}
               favorites={favorites || null}
             />
           </>
@@ -151,7 +151,7 @@ const ItemsContainer = ({ items }) => {
   return (
     <CardGroup>
       {items?.length > 0 && (
-        <Row xs={1} sm={2} md={3} lg={4} xl={5}  className="g-2 w-100">
+        <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-2 w-100">
           {items.map((item) => {
             return (
               <Col key={item.id}>
@@ -177,8 +177,10 @@ const ItemWrapper = ({ item }) => {
         <Card.Img
           src={item.photo}
           alt="item-photo"
+          fluid
           style={{
-            height: "160px",
+            width: "auto",
+            height:'200px',
             objectFit: "cover",
           }}
         />
@@ -197,7 +199,7 @@ const MerchantsContainer = ({ merchants }) => {
   return (
     <CardGroup>
       {merchants?.length > 0 && (
-        <Row xs={1} sm={2} md={2} lg={2} xl={2} className="g-4 w-100">
+        <Row xs={1} xl={1}>
           {merchants.map((merchant) => {
             return (
               <Col key={merchant.id}>
@@ -219,16 +221,20 @@ const MerchantsContainer = ({ merchants }) => {
 const MerchantWrapper = ({ merchant }) => {
   return (
     <Link to={`/merchants/${merchant.id}`}>
-      <Card className="mb-3" style={{ maxWidth: "540px" }}>
+      <Card className="mb-3">
         <Row>
-          <Col md={6}>
+          <Col md={3}>
             <Card.Img
-              src={merchant.logo}
-              className="img-fluid rounded-start"
+              src={merchant.logo || defaultMerchantLogo}
               alt="..."
+              style={{
+                width: "260px",
+                height: "260px",
+                objectFit: "contain",
+              }}
             />
           </Col>
-          <Col md={6}>
+          <Col md={9}>
             <Card.Body>
               <Card.Title>{merchant.name}</Card.Title>
               <Card.Text>
@@ -259,7 +265,6 @@ const InformationContainerStyled = styled.div`
   display: flex;
   flex-direction: column;
   width: 25%;
-
   align-items: center;
   @media screen and (max-width: 700px) {
     width: 100%;

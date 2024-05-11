@@ -1,5 +1,5 @@
 export const rules = {
-  password:{
+  password: {
     regex: /^(?=.*\d)(?=.*[a-zA-Z])[^\s]{3,30}$/,
     prompt: '3~30字元，必須包含英文、數字，不能使用空格 ，',
     min: 3,
@@ -32,3 +32,26 @@ export const rules = {
     max: 16
   }
 };
+
+export const merchantRules = {
+  name: {
+    regex: /^[a-zA-Z0-9_.\u4e00-\u9fa5-]{1,16}$/,
+    prompt: '1-16個字元，中文、英文、數字、符號(_-.)不能含有空白',
+    min: 1,
+    max: 16
+    //非捕獲組的用意為優化性能
+  },
+  phone: {
+    regex: /^(?:\d{9}|\d{10})$/,
+    prompt: "必須是9-10位數字",
+    min: 9,
+    max: 10
+  }, 
+  address: {
+    regex: /^[a-zA-Z0-9_.\u4e00-\u9fa5-]{6,16}$/,
+    prompt: '6-60個字元，中文、英文、數字、符號(_-.)不能含有空白',
+    min: 6,
+    max: 60
+    //非捕獲組的用意為優化性能
+  },
+}

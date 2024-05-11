@@ -7,6 +7,8 @@ import {
   RegisterPage,
   EditProfilePage,
   EditPasswordPage,
+  CreateMerchantPage,
+  MerchantInfoPage,
 } from "./pages";
 import React from "react";
 import { GlobalStyles } from "./components/common/global";
@@ -22,18 +24,17 @@ function App() {
           <AuthContextProvider>
             <GlobalStyles />
             <Routes>
-              <Route path="home" element={<HomePage />}></Route>
-              <Route path="login" element={<LoginPage />}></Route>
-              <Route path="register" element={<RegisterPage />}></Route>
-              <Route path="users/:id" element={<ProfilePage />}></Route>
-              <Route
-                path="users/:id/edit"
-                element={<EditProfilePage />}
-              ></Route>
+              <Route path="home" element={<HomePage />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="register" element={<RegisterPage />} />
+              <Route path="users/:id" element={<ProfilePage />} />
+              <Route path="users/:id/edit" element={<EditProfilePage />} />
               <Route
                 path="users/:id/editPassword"
                 element={<EditPasswordPage />}
-              ></Route>
+              />
+              <Route path="merchants/post" element={<CreateMerchantPage />} />
+              <Route path="merchants/:id" element={<MerchantInfoPage />} />
               {/* <Route path="*" element={<Navigate to="home" />} /> */}
             </Routes>
           </AuthContextProvider>
