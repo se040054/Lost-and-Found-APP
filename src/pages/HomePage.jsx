@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 import { getCategories } from "../api/categories";
 import { PaginationControl } from "react-bootstrap-pagination-control";
 import { defaultAvatar, defaultMerchantLogo } from "../assets/";
+import { FaRegCommentDots } from "react-icons/fa6";
 const ITEM_AMOUNT_PER_PAGE = 12;
 
 const MainContainerStyled = styled.div`
@@ -335,7 +336,12 @@ const ItemsWrapper = ({ item }) => {
 
             <small>{item.User.name}</small>
           </a>
-        )}
+        )}{" "}
+        <Card.Text>
+          <small className="text-muted ">
+            張貼於：{formatDate(item.createdAt)}
+          </small>
+        </Card.Text>
       </Card.Header>
       <Link to={`/items/${item.id}`}>
         <Card.Img
@@ -371,9 +377,9 @@ const ItemsWrapper = ({ item }) => {
             {item.description}
           </Card.Text>
         </Card.Body>
-        <Card.Footer className="text-end">
-          刊登日期：
-          {formatDate(item.createdAt)}{" "}
+        <Card.Footer className="d-flex align-items-center  justify-content-end ">
+          <FaRegCommentDots className="me-1" />
+          {item.commentAmount}
         </Card.Footer>
       </Link>
     </Card>

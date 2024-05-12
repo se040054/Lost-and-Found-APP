@@ -8,6 +8,7 @@ import {
   Card,
   CardGroup,
   Col,
+  Container,
   Image,
   Row,
   Spinner,
@@ -17,6 +18,14 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { defaultAvatar, defaultMerchantLogo } from "../../assets";
 import { getMyFavorites } from "../../api/favorites";
+import {
+  InfoRow,
+  InformationContainerStyled,
+  MainContainerStyled,
+} from "../../components/common/profileStyled";
+import { FaPhoneAlt, FaUserCircle } from "react-icons/fa";
+import { IoLocationSharp } from "react-icons/io5";
+import { MdEmail } from "react-icons/md";
 export default function ProfilePage() {
   const { currentMember } = useAuth();
   const userId = useParams().id;
@@ -90,7 +99,9 @@ export default function ProfilePage() {
           </>
         )}
         {apiRes === "false" && <h1>找不到用戶</h1>}
-        {apiRes === "loading " && <Spinner animation="border" variant="success" />}
+        {apiRes === "loading " && (
+          <Spinner animation="border" variant="success" />
+        )}
       </MainContainerStyled>
     </>
   );
@@ -99,15 +110,36 @@ export default function ProfilePage() {
 const InformationContainer = ({ profile, currentMemberId }) => {
   return (
     <InformationContainerStyled>
-      <Image
-        src={profile?.avatar || defaultAvatar}
-        roundedCircle
-        width="200px"
-      />
-      <h2 className="mt-5">{profile?.name} </h2>
-      <p className="fst-italic ">信箱:{profile?.email || "無"}</p>
-      <p className="fst-italic ">電話:{profile?.phone || "無"}</p>
-      <p className="fst-italic ">居住地:{profile?.county || "無"}</p>
+      <Container fluid className="my-2 my-0 p-0 w-100 h-100">
+        <Image
+          src={profile?.avatar || defaultAvatar}
+          roundedCircle
+          // 注意這裡如果用react 屬性設置寬高會導致大小不一
+          style={{
+            border: "1px solid gray",
+            objectFit: "contain",
+            width: "240px",
+            height: "240px",
+          }}
+        />
+      </Container>
+      <Container fluid className="my-2 my-0 p-0">
+        <InfoRow>
+          <h2>{profile.name}</h2>
+        </InfoRow>
+        <InfoRow>
+          <MdEmail />
+          <p className="fst-italic p-0 m-0 ms-1">{profile.email}</p>
+        </InfoRow>
+        <InfoRow>
+          <FaPhoneAlt />
+          <p className="fst-italic p-0 m-0 ms-1">{profile.phone}</p>
+        </InfoRow>
+        <InfoRow>
+          <IoLocationSharp />
+          <p className="fst-italic p-0 m-0 ms-1">{profile.county}</p>
+        </InfoRow>
+      </Container>
       {profile?.id === currentMemberId && (
         <Button
           className="btn btn-success w-75"
@@ -180,7 +212,7 @@ const ItemWrapper = ({ item }) => {
           fluid
           style={{
             width: "auto",
-            height:'200px',
+            height: "200px",
             objectFit: "cover",
           }}
         />
@@ -199,7 +231,7 @@ const MerchantsContainer = ({ merchants }) => {
   return (
     <CardGroup>
       {merchants?.length > 0 && (
-        <Row xs={1} xl={1}>
+        <Row xs={1} xl={1} className="w-100">
           {merchants.map((merchant) => {
             return (
               <Col key={merchant.id}>
@@ -221,9 +253,9 @@ const MerchantsContainer = ({ merchants }) => {
 const MerchantWrapper = ({ merchant }) => {
   return (
     <Link to={`/merchants/${merchant.id}`}>
-      <Card className="mb-3">
-        <Row>
-          <Col md={3}>
+      <Card fluid className="mb-3">
+        <Row fluid>
+          <Col md={4}>
             <Card.Img
               src={merchant.logo || defaultMerchantLogo}
               alt="..."
@@ -234,7 +266,7 @@ const MerchantWrapper = ({ merchant }) => {
               }}
             />
           </Col>
-          <Col md={9}>
+          <Col md={8}>
             <Card.Body>
               <Card.Title>{merchant.name}</Card.Title>
               <Card.Text>
@@ -247,27 +279,3 @@ const MerchantWrapper = ({ merchant }) => {
     </Link>
   );
 };
-
-const MainContainerStyled = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: start;
-  justify-content: start;
-  margin: 120px auto;
-  width: 80%;
-  @media screen and (max-width: 700px) {
-    flex-direction: column;
-    width: 90%;
-  }
-`;
-
-const InformationContainerStyled = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 25%;
-  align-items: center;
-  @media screen and (max-width: 700px) {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-`;

@@ -85,7 +85,7 @@ export default function FileInput({ id, defaultImage, useRef }) {
                 style={{
                   width: "200px",
                   height: "200px",
-                  objectFit: "center",
+                  objectFit: "cover",
                 }}
               />
             </Form.Label>
