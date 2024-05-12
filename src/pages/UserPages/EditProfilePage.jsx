@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { defaultAvatar } from "../../assets";
 import FileInput from "../../components/Auth/ImageInput";
-import { rules } from "../../utils/inputRules";
+import { userRules } from "../../utils/inputRules";
 import { editUser } from "../../api/user";
 import Swal from "sweetalert2";
 import { Container } from "react-bootstrap";
@@ -15,6 +15,7 @@ import {
   FormContainerStyled,
   StyledAuthButton,
 } from "../../components/Auth/FormContainerStyled";
+
 export default function EditProfilePage() {
   const { currentMember, isLogin } = useAuth(); // 注意currentMember是異步，可能導致使用者被檢測未登入所以下面掛載loading
   const [getMember, setGetMember] = useState("loading"); // 避免Effect先檢測
@@ -40,11 +41,11 @@ export default function EditProfilePage() {
     county: useRef(null),
   };
   const handleInputOnChange = (attr) => {
-    if (attr === "name") checkInput(inputRef.name.current, rules.name.regex);
-    if (attr === "email") checkInput(inputRef.email.current, rules.email.regex);
-    if (attr === "phone") checkInput(inputRef.phone.current, rules.phone.regex);
+    if (attr === "name") checkInput(inputRef.name.current, userRules.name.regex);
+    if (attr === "email") checkInput(inputRef.email.current, userRules.email.regex);
+    if (attr === "phone") checkInput(inputRef.phone.current, userRules.phone.regex);
     if (attr === "county")
-      checkInput(inputRef.county.current, rules.county.regex);
+      checkInput(inputRef.county.current, userRules.county.regex);
   };
 
   const checkInput = (node, regex) => {
@@ -103,7 +104,7 @@ export default function EditProfilePage() {
       });
       return change;
     }
-    if (checkValid(form, rules) === false) {
+    if (checkValid(form, userRules) === false) {
       Swal.fire({
         title: "修改失敗!",
         text: "有資料錯誤",
@@ -176,44 +177,44 @@ export default function EditProfilePage() {
               label="名稱"
               type="text"
               onChange={() => handleInputOnChange("name")}
-              invalidPrompt={rules.name.prompt}
+              invalidPrompt={userRules.name.prompt}
               defaultValue={currentMember.name}
               useRef={inputRef.name}
-              minlength={rules.name.min}
-              maxlength={rules.name.max}
+              minlength={userRules.name.min}
+              maxlength={userRules.name.max}
             />
             <FormInput
               id="email"
               label="信箱"
               type="email"
               onChange={() => handleInputOnChange("email")}
-              invalidPrompt={rules.email.prompt}
+              invalidPrompt={userRules.email.prompt}
               defaultValue={currentMember.email}
               useRef={inputRef.email}
-              minlength={rules.email.min}
-              maxlength={rules.email.max}
+              minlength={userRules.email.min}
+              maxlength={userRules.email.max}
             />
             <FormInput
               id="phone"
               label="電話"
               type="phone"
               onChange={() => handleInputOnChange("phone")}
-              invalidPrompt={rules.phone.prompt}
+              invalidPrompt={userRules.phone.prompt}
               defaultValue={currentMember.phone}
               useRef={inputRef.phone}
-              minlength={rules.phone.min}
-              maxlength={rules.phone.max}
+              minlength={userRules.phone.min}
+              maxlength={userRules.phone.max}
             />
             <FormInput
               id="county"
               label="居住縣市"
               type="county"
               onChange={() => handleInputOnChange("county")}
-              invalidPrompt={rules.county.prompt}
+              invalidPrompt={userRules.county.prompt}
               defaultValue={currentMember.county}
               useRef={inputRef.county}
-              minlength={rules.county.min}
-              maxlength={rules.county.max}
+              minlength={userRules.county.min}
+              maxlength={userRules.county.max}
             />
             <Container className="text-center">
               <Link to={`/users/${userId}/editPassword`}>

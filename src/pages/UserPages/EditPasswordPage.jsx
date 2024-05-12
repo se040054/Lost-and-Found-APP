@@ -5,7 +5,7 @@ import Header from "../../components/Assists/Header";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { rules } from "../../utils/inputRules";
+import { userRules } from "../../utils/inputRules";
 import { editPassword } from "../../api/user";
 import Swal from "sweetalert2";
 import { Container } from "react-bootstrap";
@@ -38,8 +38,11 @@ export default function EditPasswordPage() {
   const handleInputOnChange = () => {
     // 檢查輸入欄位合法，在檢查密碼是否相同設置state
     if (
-      checkInput(inputRef.newPassword.current, rules.password.regex) &&
-      checkInput(inputRef.confirmNewPassword.current, rules.password.regex) &&
+      checkInput(inputRef.newPassword.current, userRules.password.regex) &&
+      checkInput(
+        inputRef.confirmNewPassword.current,
+        userRules.password.regex
+      ) &&
       inputRef.newPassword.current.value ===
         inputRef.confirmNewPassword.current.value
     ) {
@@ -86,7 +89,7 @@ export default function EditPasswordPage() {
       if (validFalse) return false;
       else return true;
     };
-    if (checkValid(form, rules) === false) {
+    if (checkValid(form, userRules) === false) {
       Swal.fire({
         title: "修改失敗!",
         text: "有欄位未填寫完整",
@@ -160,10 +163,10 @@ export default function EditPasswordPage() {
             type="password"
             useRef={inputRef.newPassword}
             onChange={() => handleInputOnChange()}
-            invalidPrompt={rules.password.prompt}
+            invalidPrompt={userRules.password.prompt}
             invalidPrompt2={!passwordMatch && "密碼不一致 "}
-            minlength={rules.password.min}
-            maxlength={rules.password.max}
+            minlength={userRules.password.min}
+            maxlength={userRules.password.max}
           />
           <FormInput
             id="confirmNewPassword"
@@ -171,10 +174,10 @@ export default function EditPasswordPage() {
             type="password"
             useRef={inputRef.confirmNewPassword}
             onChange={() => handleInputOnChange()}
-            invalidPrompt={rules.password.prompt}
+            invalidPrompt={userRules.password.prompt}
             invalidPrompt2={!passwordMatch && "密碼不一致 "}
-            minlength={rules.password.min}
-            maxlength={rules.password.max}
+            minlength={userRules.password.min}
+            maxlength={userRules.password.max}
           />
 
           <Container className="text-center">

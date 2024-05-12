@@ -1,4 +1,4 @@
-export const rules = {
+export const userRules = {
   password: {
     regex: /^(?=.*\d)(?=.*[a-zA-Z])[^\s]{3,30}$/,
     prompt: '3~30字元，必須包含英文、數字，不能使用空格 ，',
