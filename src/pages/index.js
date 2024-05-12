@@ -6,4 +6,5 @@ import EditPasswordPage from "./UserPages/EditPasswordPage";
 import EditProfilePage from "./UserPages/EditProfilePage";
 import CreateMerchantPage from "./MerchantPages/CreateMerchantPage";
 import MerchantInfoPage from "./MerchantPages/MerchantInfoPage";
-export { HomePage, LoginPage, RegisterPage, ProfilePage, EditProfilePage, EditPasswordPage, CreateMerchantPage, MerchantInfoPage }
+import EditMerchantPage from "./MerchantPages/EditMerchantPage";
+export { HomePage, LoginPage, RegisterPage, ProfilePage, EditProfilePage, EditPasswordPage, CreateMerchantPage, MerchantInfoPage, EditMerchantPage }

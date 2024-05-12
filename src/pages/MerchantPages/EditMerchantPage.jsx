@@ -1,47 +1,71 @@
 import styled from "styled-components";
 import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
-import { AuthButton, AuthTitle } from "../../components/Auth/AuthPageStyled";
+import { AuthTitle } from "../../components/Auth/AuthPageStyled";
 import Header from "../../components/Assists/Header";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { defaultAvatar } from "../../assets";
+import { useNavigate, useParams } from "react-router-dom";
+import { defaultMerchantLogo } from "../../assets";
 import FileInput from "../../components/Auth/ImageInput";
-import { rules } from "../../utils/inputRules";
-import { editUser } from "../../api/user";
+import { merchantRules } from "../../utils/inputRules";
 import Swal from "sweetalert2";
 import { Button, Container } from "react-bootstrap";
-export default function EditProfilePage() {
+import { editMerchant, getMerchant } from "../../api/merchants";
+export default function EditMerchantPage() {
   const { currentMember, isLogin } = useAuth(); // 注意currentMember是異步，可能導致使用者被檢測未登入所以下面掛載loading
-  const [getMember, setGetMember] = useState("loading"); // 避免Effect先檢測
-  const userId = useParams().id;
+  const [apiRes, setApiRes] = useState("loading"); // 避免Effect先檢測
+  const [merchant, setMerchant] = useState(null);
+  const merchantId = useParams().id;
   const navigate = useNavigate();
   useEffect(() => {
-    if (isLogin === "false") navigate("/login");
-    if (isLogin === "success") setGetMember("success");
-    if (getMember === "success") {
-      if (Number(userId) !== Number(currentMember.id)) {
-        // 檢測修改對象是否為登入者，注意型別
-        navigate(`/users/${currentMember.id}/edit`);
+    const fetchMerchant = async () => {
+      if (isLogin === "false") navigate("/login");
+      try {
+        const data = await getMerchant(merchantId);
+        if (!data.apiData) {
+          setMerchant(null);
+          setApiRes("false");
+          return;
+        }
+        setMerchant(data.apiData);
+        setApiRes("step1"); //加載完商家資料
+      } catch (error) {
+        console.log(error);
+        setApiRes("false");
+        return error;
+      }
+    };
+    fetchMerchant();
+  }, [merchantId, isLogin, navigate]);
+  useEffect(() => {
+    if (apiRes === "step1" && isLogin === "success") {
+      if (merchant.userId !== currentMember.id) {
+        Swal.fire({
+          title: "權限不足!",
+          text: "不能修改別人的商家",
+          icon: "error",
+          confirmButtonText: "繼續",
+          willClose: () => navigate("/home"),
+        });
+      } else {
+        setApiRes("success");
       }
     }
-  }, [currentMember, isLogin, userId, getMember, navigate]);
-
+  }, [merchant, apiRes, navigate]);
   const inputRef = {
-    // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback
     name: useRef(null),
-    avatar: useRef(null),
-    email: useRef(null),
+    address: useRef(null),
     phone: useRef(null),
-    county: useRef(null),
+    logo: useRef(null),
   };
   const handleInputOnChange = (attr) => {
-    if (attr === "name") checkInput(inputRef.name.current, rules.name.regex);
-    if (attr === "email") checkInput(inputRef.email.current, rules.email.regex);
-    if (attr === "phone") checkInput(inputRef.phone.current, rules.phone.regex);
-    if (attr === "county")
-      checkInput(inputRef.county.current, rules.county.regex);
+    if (attr === "name")
+      checkInput(inputRef.name.current, merchantRules.name.regex);
+    if (attr === "address")
+      checkInput(inputRef.address.current, merchantRules.address.regex);
+    if (attr === "phone")
+      checkInput(inputRef.phone.current, merchantRules.phone.regex);
   };
 
   const checkInput = (node, regex) => {
@@ -67,26 +91,24 @@ export default function EditProfilePage() {
     e.preventDefault();
     const form = {
       name: inputRef.name.current.value.trim(),
-      avatar: inputRef.avatar.current.files[0],
-      email: inputRef.email.current.value.trim(),
+      address: inputRef.address.current.value.trim(),
       phone: inputRef.phone.current.value.trim(),
-      county: inputRef.county.current.value.trim(),
+      logo: inputRef.logo.current.files[0],
     };
-
-    const checkEdit = (form, member) => {
+    const checkEdit = (form, merchant) => {
       //如果某個欄位的值沒變 就把他從表單清除不送出
       Object.keys(form).forEach((attr) => {
-        console.log(form[attr], member[attr]);
-        if (form[attr] === member[attr]) form[attr] = null;
+        console.log(form[attr], merchant[attr]);
+        if (form[attr] === merchant[attr]) form[attr] = null;
       });
     };
-    checkEdit(form, currentMember);
+    checkEdit(form, merchant);
     const checkValid = (form, rules) => {
       // 檢查值是否合法
       let validFalse = false;
       Object.keys(form).forEach((attr) => {
-        if (form[attr] && attr !== "avatar") {
-          // 圖像不檢測
+        if (form[attr] && attr !== "logo") {
+          // 圖像不檢測 (在元件本身就檢測過了)
           if (!rules[attr].regex.test(form[attr])) validFalse = true;
         }
       });
@@ -94,13 +116,14 @@ export default function EditProfilePage() {
       else return true;
     };
     function hasChange(obj) {
+      // 檢查是否整張表單都與修改前相同
       let change = false;
       Object.keys(obj).forEach((key) => {
         if (obj[key]) change = true;
       });
       return change;
     }
-    if (checkValid(form, rules) === false) {
+    if (checkValid(form, merchantRules) === false) {
       Swal.fire({
         title: "修改失敗!",
         text: "有資料錯誤",
@@ -118,17 +141,16 @@ export default function EditProfilePage() {
       return;
     } else {
       try {
-        const data = await editUser({ id: currentMember.id, form });
-        console.log("即將送出表單" + data.status, data.apiData);
-        // 送出資料後 會收到新的token 要更新payload，網站的header profile等等才會變化
-        localStorage.setItem("apiToken", data.apiData.jwtToken);
+        console.log("即將送出表單" + JSON.stringify(form));
+        const data = await editMerchant({ id: merchantId, form });
+        console.log(data)
         if (data.status === "success") {
           Swal.fire({
             title: "修改成功!",
             text: "即將跳轉頁面",
             timer: 3000,
             confirmButtonText: "繼續",
-            willClose: () => navigate(`/users/${userId}`),
+            willClose: () => navigate(`/merchants/${merchantId}`),
           });
         } else {
           Swal.fire({
@@ -153,70 +175,58 @@ export default function EditProfilePage() {
   const handleCancel = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    navigate(`/users/${userId}`);
+    navigate(`/merchants/${merchantId}`);
   };
   return (
     <>
       <Header></Header>
       <EditContainer>
         {/* 注意這邊很容易因為還沒拿到currentMember導致defaultValue失效 */}
-        {getMember === "success" && (
+        {apiRes === "success" && (
           <FormContainer>
-            <AuthTitle>編輯個人資料</AuthTitle>
+            <AuthTitle>編輯商家資料</AuthTitle>
             <FileInput
-              id="avatar"
-              defaultImage={currentMember.avatar || defaultAvatar}
-              useRef={inputRef.avatar}
+              id="logo"
+              defaultImage={merchant.logo || defaultMerchantLogo}
+              useRef={inputRef.logo}
             />
             <FormInput
               id="name"
-              label="名稱"
+              label="商家名稱"
               type="text"
+              placeholder="請輸入商家名稱.."
               onChange={() => handleInputOnChange("name")}
-              invalidPrompt={rules.name.prompt}
-              defaultValue={currentMember.name}
+              invalidPrompt={merchantRules.name.prompt}
               useRef={inputRef.name}
-              minlength={rules.name.min}
-              maxlength={rules.name.max}
-            />
-            <FormInput
-              id="email"
-              label="信箱"
-              type="email"
-              onChange={() => handleInputOnChange("email")}
-              invalidPrompt={rules.email.prompt}
-              defaultValue={currentMember.email}
-              useRef={inputRef.email}
-              minlength={rules.email.min}
-              maxlength={rules.email.max}
+              defaultValue={merchant.name}
+              minlength={merchantRules.name.min}
+              maxlength={merchantRules.name.max}
             />
             <FormInput
               id="phone"
-              label="電話"
+              label="電話(市話或行動)"
               type="phone"
+              placeholder="請輸入商家市話或行動電話..."
               onChange={() => handleInputOnChange("phone")}
-              invalidPrompt={rules.phone.prompt}
-              defaultValue={currentMember.phone}
+              invalidPrompt={merchantRules.phone.prompt}
               useRef={inputRef.phone}
-              minlength={rules.phone.min}
-              maxlength={rules.phone.max}
+              defaultValue={merchant.phone}
+              minlength={merchantRules.phone.min}
+              maxlength={merchantRules.phone.max}
             />
             <FormInput
-              id="county"
-              label="居住縣市"
-              type="county"
-              onChange={() => handleInputOnChange("county")}
-              invalidPrompt={rules.county.prompt}
-              defaultValue={currentMember.county}
-              useRef={inputRef.county}
-              minlength={rules.county.min}
-              maxlength={rules.county.max}
+              id="address"
+              label="地址"
+              asTextarea={true}
+              placeholder="請輸入商家地址"
+              onChange={() => handleInputOnChange("address")}
+              invalidPrompt={merchantRules.address.prompt}
+              useRef={inputRef.address}
+              defaultValue={merchant.address}
+              minlength={merchantRules.address.min}
+              maxlength={merchantRules.address.max}
             />
-            <Container className="text-center">
-              <Link to={`/users/${userId}/editPassword`}>
-                <h5 className="btn btn-warning ">我要修改密碼</h5>
-              </Link>
-            </Container>
+
             <Container fluid className="d-flex justify-content-between">
               <StyledAuthButton
                 className="btn btn-secondary"

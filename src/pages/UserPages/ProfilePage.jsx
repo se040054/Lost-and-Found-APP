@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const { currentMember } = useAuth();
   const userId = useParams().id;
   const [profile, setProfile] = useState();
-  const [res, setRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
+  const [apiRes, setApiRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
   const [favorites, setFavorites] = useState([]);
   useEffect(() => {
     const fetchUserData = async () => {
@@ -29,15 +29,15 @@ export default function ProfilePage() {
         const data = await getUser(userId);
         if (!data.apiData) {
           setProfile(null);
-          setRes("false");
+          setApiRes("false");
           return;
         }
         setProfile(data.apiData);
-        setRes("step1"); //加載完個人資料
-        console.log(res, "加載完1階段");
+        setApiRes("step1"); //加載完個人資料
+        console.log(apiRes, "加載完1階段");
       } catch (error) {
         console.log(error);
-        setRes("false");
+        setApiRes("false");
         return error;
       }
     };
@@ -45,38 +45,38 @@ export default function ProfilePage() {
   }, [userId]);
   useEffect(() => {
     // 效果要分開使用，因為setRes 在一次渲染只會改變一次 放在一起寫會導致res錯亂
-    if (res === "step1") {
+    if (apiRes === "step1") {
       //加載完個人資料後加載收藏
       if (profile?.id === currentMember?.id) {
         try {
           const fetchFavorites = async () => {
             const data = await getMyFavorites();
             setFavorites(data.apiData);
-            setRes("success");
-            console.log(res, "加載完2階段");
+            setApiRes("success");
+            console.log(apiRes, "加載完2階段");
           };
 
           fetchFavorites();
         } catch (error) {
           console.log(error);
           setFavorites(null);
-          setRes("false");
+          setApiRes("false");
           return error;
         }
       } else {
-        setRes("success");
+        setApiRes("success");
       }
     }
-    if (res === "false") {
+    if (apiRes === "false") {
       console.log(profile, favorites || null);
     }
-    console.log(res);
+    console.log(apiRes);
   }, [profile]);
   return (
     <>
       <Header />
       <MainContainerStyled>
-        {res === "success" && (
+        {apiRes === "success" && (
           <>
             <InformationContainer
               profile={profile}
@@ -89,8 +89,8 @@ export default function ProfilePage() {
             />
           </>
         )}
-        {res === "false" && <h1>找不到用戶</h1>}
-        {res === "loading " && <Spinner animation="border" variant="success" />}
+        {apiRes === "false" && <h1>找不到用戶</h1>}
+        {apiRes === "loading " && <Spinner animation="border" variant="success" />}
       </MainContainerStyled>
     </>
   );

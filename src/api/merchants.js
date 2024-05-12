@@ -26,11 +26,25 @@ export const postMerchant = async (form) => {
     console.log(error)
     return error.response.data
   }
-} 
+}
 
-export const getMerchant = async(id)=>{
+export const getMerchant = async (id) => {
   try {
-    const {data}  = await axios.get(`${apiBaseURL}/${id}`)
+    const { data } = await axios.get(`${apiBaseURL}/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+}
+
+export const editMerchant = async ({ id, form }) => {
+  try {
+    const { data } = await tokenInstance.put(`${apiBaseURL}/${id}`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data' //因為有file 記得改
+      }
+    })
     return data
   } catch (error) {
     console.log(error)

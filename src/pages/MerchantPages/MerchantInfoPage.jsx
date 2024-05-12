@@ -23,23 +23,22 @@ import { IoLocationSharp } from "react-icons/io5";
 export default function MerchantInfoPage() {
   const { currentMember } = useAuth();
   const merchantId = useParams().id;
-  const [info, setInfo] = useState();
-  const [res, setRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
+  const [merchant, setMerchant] = useState();
+  const [apiRes, setApiRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
   useEffect(() => {
     const fetchMerchant = async () => {
       try {
         const data = await getMerchant(merchantId);
         if (!data.apiData) {
-          setInfo(null);
-          setRes("false");
+          setMerchant(null);
+          setApiRes("false");
           return;
         }
-        setInfo(data.apiData);
-        console.log("仔入商家" + JSON.stringify(data.apiData.Items));
-        setRes("success"); //加載完商家資料
+        setMerchant(data.apiData);
+        setApiRes("success"); //加載完商家資料
       } catch (error) {
         console.log(error);
-        setRes("false");
+        setApiRes("false");
         return error;
       }
     };
@@ -49,28 +48,28 @@ export default function MerchantInfoPage() {
     <>
       <Header />
       <MainContainerStyled>
-        {res === "success" && (
+        {apiRes === "success" && (
           <>
             <InformationContainer
-              info={info}
+              merchant={merchant}
               currentMemberId={currentMember?.id}
             />
-            <PropertiesContainer items={info.Items} />
+            <PropertiesContainer items={merchant.Items} />
           </>
         )}
-        {res === "false" && <h1>此商家不存在</h1>}
-        {res === "loading " && <Spinner animation="border" variant="success" />}
+        {apiRes === "false" && <h1>此商家不存在</h1>}
+        {apiRes === "loading " && <Spinner animation="border" variant="success" />}
       </MainContainerStyled>
     </>
   );
 }
 
-const InformationContainer = ({ info, currentMemberId }) => {
+const InformationContainer = ({ merchant, currentMemberId }) => {
   return (
     <InformationContainerStyled>
       <Container fluid className="my-2 my-0 p-0 w-100 h-100">
         <Image
-          src={info?.logo || defaultMerchantLogo}
+          src={merchant?.logo || defaultMerchantLogo}
           thumbnail
           // 注意這裡如果用react 屬性設置寬高會導致大小不一
           style={{
@@ -83,29 +82,29 @@ const InformationContainer = ({ info, currentMemberId }) => {
       </Container>
       <Container fluid className="my-2 my-0 p-0">
         <InfoRow>
-          <h2>{info?.name}</h2>
+          <h2>{merchant?.name}</h2>
         </InfoRow>
         <InfoRow>
           <FaUserCircle />
-          <Link to={`/users/${info.userId}`}>
+          <Link to={`/users/${merchant.userId}`}>
             <p className="text-primary fw-bolder p-0 m-0 ms-1">
-              {info?.User.name}
+              {merchant?.User.name}
             </p>
           </Link>
         </InfoRow>
         <InfoRow>
           <FaPhoneAlt />
-          <p className="fst-italic p-0 m-0 ms-1">{info.phone}</p>
+          <p className="fst-italic p-0 m-0 ms-1">{merchant.phone}</p>
         </InfoRow>
         <InfoRow>
           <IoLocationSharp />
-          <p className="fst-italic p-0 m-0 ms-1">{info.address}</p>
+          <p className="fst-italic p-0 m-0 ms-1">{merchant.address}</p>
         </InfoRow>
       </Container>
-      {info.userId === currentMemberId && (
+      {merchant.userId === currentMemberId && (
         <Button
           className="btn btn-success w-75"
-          href={`/merchants/${info.id}/edit`}
+          href={`/merchants/${merchant.id}/edit`}
         >
           編輯商家資料
         </Button>

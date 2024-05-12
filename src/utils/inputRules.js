@@ -48,7 +48,7 @@ export const merchantRules = {
     max: 10
   }, 
   address: {
-    regex: /^[a-zA-Z0-9_.\u4e00-\u9fa5-]{6,16}$/,
+    regex: /^[a-zA-Z0-9_.\u4e00-\u9fa5-]{6,60}$/,
     prompt: '6-60個字元，中文、英文、數字、符號(_-.)不能含有空白',
     min: 6,
     max: 60
