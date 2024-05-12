@@ -1,7 +1,6 @@
-import styled from "styled-components";
 import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
-import { AuthButton, AuthTitle } from "../../components/Auth/AuthPageStyled";
+import { AuthTitle } from "../../components/Auth/AuthPageStyled";
 import Header from "../../components/Assists/Header";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -11,7 +10,11 @@ import FileInput from "../../components/Auth/ImageInput";
 import { rules } from "../../utils/inputRules";
 import { editUser } from "../../api/user";
 import Swal from "sweetalert2";
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import {
+  FormContainerStyled,
+  StyledAuthButton,
+} from "../../components/Auth/FormContainerStyled";
 export default function EditProfilePage() {
   const { currentMember, isLogin } = useAuth(); // 注意currentMember是異步，可能導致使用者被檢測未登入所以下面掛載loading
   const [getMember, setGetMember] = useState("loading"); // 避免Effect先檢測
@@ -158,7 +161,7 @@ export default function EditProfilePage() {
   return (
     <>
       <Header></Header>
-      <EditContainer>
+      <FormContainerStyled>
         {/* 注意這邊很容易因為還沒拿到currentMember導致defaultValue失效 */}
         {getMember === "success" && (
           <FormContainer>
@@ -233,34 +236,7 @@ export default function EditProfilePage() {
             </Container>
           </FormContainer>
         )}
-      </EditContainer>
+      </FormContainerStyled>
     </>
   );
 }
-
-// id,
-// label,
-// type,
-// value,
-// placeholder,
-// onChange,
-// invalidPrompt,
-// minlength,
-// maxlength,
-// useRef,
-// needFeedback = true,
-
-const EditContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const StyledAuthButton = styled(Button)`
-  display: block;
-  margin: 20px 0;
-`;

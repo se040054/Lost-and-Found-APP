@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
 import { AuthTitle } from "../../components/Auth/AuthPageStyled";
@@ -10,8 +9,12 @@ import { defaultMerchantLogo } from "../../assets";
 import FileInput from "../../components/Auth/ImageInput";
 import { merchantRules } from "../../utils/inputRules";
 import Swal from "sweetalert2";
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { editMerchant, getMerchant } from "../../api/merchants";
+import {
+  FormContainerStyled,
+  StyledAuthButton,
+} from "../../components/Auth/FormContainerStyled";
 export default function EditMerchantPage() {
   const { currentMember, isLogin } = useAuth(); // 注意currentMember是異步，可能導致使用者被檢測未登入所以下面掛載loading
   const [apiRes, setApiRes] = useState("loading"); // 避免Effect先檢測
@@ -52,7 +55,7 @@ export default function EditMerchantPage() {
         setApiRes("success");
       }
     }
-  }, [merchant, apiRes, navigate]);
+  }, [merchant, apiRes, navigate, currentMember?.id, isLogin]);
   const inputRef = {
     name: useRef(null),
     address: useRef(null),
@@ -143,7 +146,7 @@ export default function EditMerchantPage() {
       try {
         console.log("即將送出表單" + JSON.stringify(form));
         const data = await editMerchant({ id: merchantId, form });
-        console.log(data)
+        console.log(data);
         if (data.status === "success") {
           Swal.fire({
             title: "修改成功!",
@@ -180,7 +183,7 @@ export default function EditMerchantPage() {
   return (
     <>
       <Header></Header>
-      <EditContainer>
+      <FormContainerStyled>
         {/* 注意這邊很容易因為還沒拿到currentMember導致defaultValue失效 */}
         {apiRes === "success" && (
           <FormContainer>
@@ -243,34 +246,7 @@ export default function EditMerchantPage() {
             </Container>
           </FormContainer>
         )}
-      </EditContainer>
+      </FormContainerStyled>
     </>
   );
 }
-
-// id,
-// label,
-// type,
-// value,
-// placeholder,
-// onChange,
-// invalidPrompt,
-// minlength,
-// maxlength,
-// useRef,
-// needFeedback = true,
-
-const EditContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const StyledAuthButton = styled(Button)`
-  display: block;
-  margin: 20px 0;
-`;

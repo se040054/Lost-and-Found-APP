@@ -1,17 +1,20 @@
-import styled from "styled-components";
 import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
 import { AuthTitle } from "../../components/Auth/AuthPageStyled";
 import Header from "../../components/Assists/Header";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { defaultMerchantLogo } from "../../assets";
 import FileInput from "../../components/Auth/ImageInput";
 import { merchantRules } from "../../utils/inputRules";
 import Swal from "sweetalert2";
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { postMerchant } from "../../api/merchants";
+import {
+  FormContainerStyled,
+  StyledAuthButton,
+} from "../../components/Auth/FormContainerStyled";
 export default function CreateMerchantPage() {
   const { isLogin } = useAuth();
   const navigate = useNavigate();
@@ -121,7 +124,7 @@ export default function CreateMerchantPage() {
   return (
     <>
       <Header></Header>
-      <EditContainer>
+      <FormContainerStyled>
         <FormContainer>
           <AuthTitle>申請商家</AuthTitle>
           <h5 className="text-center">上傳商家封面 :</h5>
@@ -179,34 +182,7 @@ export default function CreateMerchantPage() {
             </StyledAuthButton>
           </Container>
         </FormContainer>
-      </EditContainer>
+      </FormContainerStyled>
     </>
   );
 }
-
-// id,
-// label,
-// type,
-// value,
-// placeholder,
-// onChange,
-// invalidPrompt,
-// minlength,
-// maxlength,
-// useRef,
-// needFeedback = true,
-
-const EditContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const StyledAuthButton = styled(Button)`
-  display: block;
-  margin: 20px 0;
-`;

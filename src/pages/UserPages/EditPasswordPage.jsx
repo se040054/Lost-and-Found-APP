@@ -1,17 +1,18 @@
-import styled from "styled-components";
 import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
-import { AuthButton, AuthTitle } from "../../components/Auth/AuthPageStyled";
+import { AuthTitle } from "../../components/Auth/AuthPageStyled";
 import Header from "../../components/Assists/Header";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { defaultAvatar } from "../../assets";
-import FileInput from "../../components/Auth/ImageInput";
 import { rules } from "../../utils/inputRules";
-import { editPassword, editUser } from "../../api/user";
+import { editPassword } from "../../api/user";
 import Swal from "sweetalert2";
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import {
+  FormContainerStyled,
+  StyledAuthButton,
+} from "../../components/Auth/FormContainerStyled";
 export default function EditPasswordPage() {
   const { currentMember, isLogin } = useAuth();
   const [getMember, setGetMember] = useState("loading"); // 避免Effect先檢測
@@ -19,7 +20,7 @@ export default function EditPasswordPage() {
   const userId = useParams().id;
   const navigate = useNavigate();
   useEffect(() => {
-    if (isLogin === "false") navigate('/login')
+    if (isLogin === "false") navigate("/login");
     if (isLogin === "success") setGetMember("success");
     if (getMember === "success") {
       if (Number(userId) !== Number(currentMember.id)) {
@@ -27,7 +28,6 @@ export default function EditPasswordPage() {
         navigate(`/users/${currentMember.id}/edit`);
       }
     }
-    
   }, [currentMember, isLogin, userId, getMember, navigate]);
   const inputRef = {
     // input欄位取值+取用節點故使用useRef，並且需要同步密碼與確認密碼並進行同步渲染feedback
@@ -143,7 +143,7 @@ export default function EditPasswordPage() {
   return (
     <>
       <Header></Header>
-      <EditContainer>
+      <FormContainerStyled>
         {/* 注意這邊很容易因為還沒拿到currentMember導致defaultValue失效 */}
         <FormContainer>
           <AuthTitle>重設密碼</AuthTitle>
@@ -197,34 +197,7 @@ export default function EditPasswordPage() {
             </StyledAuthButton>
           </Container>
         </FormContainer>
-      </EditContainer>
+      </FormContainerStyled>
     </>
   );
 }
-
-// id,
-// label,
-// type,
-// value,
-// placeholder,
-// onChange,
-// invalidPrompt,
-// minlength,
-// maxlength,
-// useRef,
-// needFeedback = true,
-
-const EditContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const StyledAuthButton = styled(Button)`
-  display: block;
-  margin: 20px 0;
-`;

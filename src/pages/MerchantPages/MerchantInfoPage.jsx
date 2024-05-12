@@ -15,9 +15,9 @@ import {
   Tabs,
 } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import { defaultAvatar, defaultMerchantLogo } from "../../assets";
+import { defaultMerchantLogo } from "../../assets";
 import { getMerchant } from "../../api/merchants";
-import { FaPhone, FaPhoneAlt, FaUserCircle } from "react-icons/fa";
+import { FaPhoneAlt, FaUserCircle } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
 
 export default function MerchantInfoPage() {
@@ -58,7 +58,9 @@ export default function MerchantInfoPage() {
           </>
         )}
         {apiRes === "false" && <h1>此商家不存在</h1>}
-        {apiRes === "loading " && <Spinner animation="border" variant="success" />}
+        {apiRes === "loading " && (
+          <Spinner animation="border" variant="success" />
+        )}
       </MainContainerStyled>
     </>
   );
