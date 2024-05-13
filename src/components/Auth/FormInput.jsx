@@ -17,6 +17,7 @@ export default function FormInput({
   needFeedback = true,
   defaultValue,
   asTextarea,
+  isRequired,
 }) {
   return (
     <Row>
@@ -36,6 +37,7 @@ export default function FormInput({
           }}
           minLength={minlength || null}
           maxLength={maxlength || null}
+          required={isRequired || false}
         />
         {needFeedback && (
           <>

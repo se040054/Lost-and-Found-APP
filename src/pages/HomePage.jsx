@@ -123,7 +123,7 @@ export default function HomePage() {
             </Col>
             <Col className="col-md-3 offset-md-1">
               <CreateContainer>
-                <Link to="/merchants/post">
+                <Link to="/items/post">
                   <Button variant="success">
                     <FiPlusCircle className="me-1 mb-1" size="1rem" />
                     刊登物品

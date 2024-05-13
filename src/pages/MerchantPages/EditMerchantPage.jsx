@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { defaultMerchantLogo } from "../../assets";
-import FileInput from "../../components/Auth/ImageInput";
+import ImageInput from "../../components/Auth/ImageInput";
 import { merchantRules } from "../../utils/inputRules";
 import Swal from "sweetalert2";
 import { Container } from "react-bootstrap";
@@ -188,7 +188,7 @@ export default function EditMerchantPage() {
         {apiRes === "success" && (
           <FormContainer>
             <AuthTitle>編輯商家資料</AuthTitle>
-            <FileInput
+            <ImageInput
               id="logo"
               defaultImage={merchant.logo || defaultMerchantLogo}
               useRef={inputRef.logo}

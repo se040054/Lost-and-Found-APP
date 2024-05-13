@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { defaultAvatar } from "../../assets";
-import FileInput from "../../components/Auth/ImageInput";
+import ImageInput from "../../components/Auth/ImageInput";
 import { userRules } from "../../utils/inputRules";
 import { editUser } from "../../api/user";
 import Swal from "sweetalert2";
@@ -167,10 +167,11 @@ export default function EditProfilePage() {
         {getMember === "success" && (
           <FormContainer>
             <AuthTitle>編輯個人資料</AuthTitle>
-            <FileInput
+            <ImageInput
               id="avatar"
               defaultImage={currentMember.avatar || defaultAvatar}
               useRef={inputRef.avatar}
+              label={"上傳照片"}
             />
             <FormInput
               id="name"

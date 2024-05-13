@@ -129,15 +129,15 @@ const InformationContainer = ({ profile, currentMemberId }) => {
         </InfoRow>
         <InfoRow>
           <MdEmail />
-          <p className="fst-italic p-0 m-0 ms-1">{profile.email}</p>
+          <p className="fst-italic p-0 m-0 ms-1">{profile.email || "無"}</p>
         </InfoRow>
         <InfoRow>
           <FaPhoneAlt />
-          <p className="fst-italic p-0 m-0 ms-1">{profile.phone}</p>
+          <p className="fst-italic p-0 m-0 ms-1">{profile.phone || "無"}</p>
         </InfoRow>
         <InfoRow>
           <IoLocationSharp />
-          <p className="fst-italic p-0 m-0 ms-1">{profile.county}</p>
+          <p className="fst-italic p-0 m-0 ms-1">{profile.county || "無"}</p>
         </InfoRow>
       </Container>
       {profile?.id === currentMemberId && (

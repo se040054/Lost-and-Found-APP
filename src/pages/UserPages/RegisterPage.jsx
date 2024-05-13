@@ -139,6 +139,7 @@ export default function RegisterPage() {
             invalidPrompt={"至少包含 3 個以上字元"}
             minlength={3}
             maxlength={16}
+            isRequired={true}
           />
           <FormInput
             id="password"
@@ -147,9 +148,12 @@ export default function RegisterPage() {
             placeholder="請輸入密碼"
             onChange={() => handleInputOnChange("password")}
             useRef={inputRef.password}
-            invalidPrompt={!passwordMatch ? "密碼不一致" : "至少包含3個以上字元"}
+            invalidPrompt={
+              !passwordMatch ? "密碼不一致" : "至少包含3個以上字元"
+            }
             minlength={3}
             maxlength={16}
+            isRequired={true}
           />
           <FormInput
             id="confirmPassword"
@@ -158,9 +162,12 @@ export default function RegisterPage() {
             placeholder="請輸入確認密碼"
             onChange={() => handleInputOnChange("confirmPassword")}
             useRef={inputRef.confirmPassword}
-            invalidPrompt={!passwordMatch ? "密碼不一致" : "至少包含3個以上字元"}
+            invalidPrompt={
+              !passwordMatch ? "密碼不一致" : "至少包含3個以上字元"
+            }
             minlength={3}
             maxlength={16}
+            isRequired={true}
           />
           <FormInput
             id="name"
@@ -172,6 +179,7 @@ export default function RegisterPage() {
             invalidPrompt={"至少包含 2 個以上字元"}
             minlength={2}
             maxlength={16}
+            isRequired={true}
           />
           <AuthButton
             type="submit"

@@ -29,5 +29,11 @@ export const GlobalStyles = createGlobalStyle`
     text-decoration: none; 
   }
 
+
+  /* 必填欄位加上星號 */
+  label:has(+input:required , +textarea:required)::before{
+  content: '* ';
+  color: #F4473B;
+  }
+
   `
-  

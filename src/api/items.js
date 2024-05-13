@@ -2,6 +2,18 @@ import axios from "axios";
 
 const apiBaseURL = `${process.env.REACT_APP_API_BASE_URL}/items`
 
+const tokenInstance = axios.create({
+  baseURL: apiBaseURL,
+});
+
+tokenInstance.interceptors.request.use(function (config) {
+  const token = localStorage.getItem('apiToken')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
+
 export const getItems = async ({ page = 1, category = null, search = null }) => {
   try {
     console.log(apiBaseURL)
@@ -17,6 +29,18 @@ export const getItems = async ({ page = 1, category = null, search = null }) => 
     console.log(error)
     return error.response.data
   }
+}
 
-
+export const postItem = async (form) => {
+  try {
+    const { data } = await tokenInstance.post(`${apiBaseURL}`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data' //因為有file 記得改
+      }
+    })
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
 }

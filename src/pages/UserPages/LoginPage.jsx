@@ -80,6 +80,7 @@ export default function LoginPage() {
             placeholder="請輸入帳號"
             onChange={(e) => handleInputOnChange("account", e.target.value)}
             needFeedback={false}
+            isRequired={true}
           />
           <FormInput
             id="password"
@@ -88,6 +89,7 @@ export default function LoginPage() {
             placeholder="請輸入密碼"
             onChange={(e) => handleInputOnChange("password", e.target.value)}
             needFeedback={false}
+            isRequired={true}
           />
 
           <AuthButton

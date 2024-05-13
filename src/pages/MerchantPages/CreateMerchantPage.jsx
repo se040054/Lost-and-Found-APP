@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { defaultMerchantLogo } from "../../assets";
-import FileInput from "../../components/Auth/ImageInput";
+import ImageInput from "../../components/Auth/ImageInput";
 import { merchantRules } from "../../utils/inputRules";
 import Swal from "sweetalert2";
 import { Container } from "react-bootstrap";
@@ -15,6 +15,7 @@ import {
   FormContainerStyled,
   StyledAuthButton,
 } from "../../components/Auth/FormContainerStyled";
+
 export default function CreateMerchantPage() {
   const { isLogin } = useAuth();
   const navigate = useNavigate();
@@ -128,7 +129,7 @@ export default function CreateMerchantPage() {
         <FormContainer>
           <AuthTitle>申請商家</AuthTitle>
           <h5 className="text-center">上傳商家封面 :</h5>
-          <FileInput
+          <ImageInput
             id="logo"
             defaultImage={defaultMerchantLogo}
             useRef={inputRef.logo}
@@ -143,6 +144,7 @@ export default function CreateMerchantPage() {
             useRef={inputRef.name}
             minlength={merchantRules.name.min}
             maxlength={merchantRules.name.max}
+            isRequired={true}
           />
           <FormInput
             id="phone"
@@ -154,6 +156,7 @@ export default function CreateMerchantPage() {
             useRef={inputRef.phone}
             minlength={merchantRules.phone.min}
             maxlength={merchantRules.phone.max}
+            isRequired={true}
           />
           <FormInput
             id="address"
@@ -165,6 +168,7 @@ export default function CreateMerchantPage() {
             useRef={inputRef.address}
             minlength={merchantRules.address.min}
             maxlength={merchantRules.address.max}
+            isRequired={true}
           />
 
           <Container fluid className="d-flex justify-content-between">

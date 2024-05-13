@@ -4,7 +4,13 @@ import Form from "react-bootstrap/Form";
 import { Container, Image } from "react-bootstrap";
 import { useState } from "react";
 import Swal from "sweetalert2";
-export default function FileInput({ id, defaultImage, useRef }) {
+export default function ImageInput({
+  id,
+  defaultImage,
+  useRef,
+  label,
+  isRequired,
+}) {
   const [image, setImage] = useState(defaultImage);
   const handleChange = (file) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
@@ -72,23 +78,11 @@ export default function FileInput({ id, defaultImage, useRef }) {
     };
   };
   return (
-    <Container>
-      <Row className="justify-content-md-center">
-        <Col md="12" className="text-center">
-          <Form.Group as={Col} md="12">
-            <Form.Label htmlFor={id} style={{ cursor: "pointer" }}>
-              <Image
-                alt="avatar"
-                id="avatar-preview"
-                src={image}
-                roundedCircle
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  objectFit: "cover",
-                }}
-              />
-            </Form.Label>
+    <>
+      <Row>
+        <Col md="12">
+          <Form.Group as={Col} md="12" className="text-start">
+            <Form.Label htmlFor={id}>{label}</Form.Label>
             <Form.Control
               ref={useRef || null}
               className="mb-3 input-rows"
@@ -107,7 +101,24 @@ export default function FileInput({ id, defaultImage, useRef }) {
                   e.target.classList.add("is-invalid");
                 }
               }}
+              required={isRequired || false}
             />
+            <Container className="m-0 p-0 text-center">
+              <Form.Label htmlFor={id} style={{ cursor: "pointer" }}>
+                <Image
+                  alt="avatar"
+                  id="avatar-preview"
+                  src={image}
+                  roundedCircle
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    objectFit: "cover",
+                  }}
+                />
+              </Form.Label>
+            </Container>
+
             <>
               <Form.Control.Feedback
                 type="invalid"
@@ -119,6 +130,6 @@ export default function FileInput({ id, defaultImage, useRef }) {
           </Form.Group>
         </Col>
       </Row>
-    </Container>
+    </>
   );
 }

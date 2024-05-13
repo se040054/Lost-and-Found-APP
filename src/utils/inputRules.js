@@ -46,12 +46,33 @@ export const merchantRules = {
     prompt: "必須是9-10位數字",
     min: 9,
     max: 10
-  }, 
+  },
   address: {
     regex: /^[a-zA-Z0-9_.\u4e00-\u9fa5-]{6,60}$/,
     prompt: '6-60個字元，中文、英文、數字、符號(_-.)不能含有空白',
     min: 6,
     max: 60
     //非捕獲組的用意為優化性能
+  },
+}
+
+export const itemRules = {
+  name: {
+    regex: /.{2,20}/,
+    prompt: "2-20個字元",
+    min: 2,
+    max: 20
+  },
+  description: {
+    regex: /.{0,200}/,
+    prompt: "0-200個字元",
+    min: 0,
+    max: 200
+  },
+  place: {
+    regex: /.{0,40}/,
+    prompt: "0-40個字元",
+    min: 0,
+    max: 40
   },
 }

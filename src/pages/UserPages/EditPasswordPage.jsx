@@ -156,6 +156,7 @@ export default function EditPasswordPage() {
             type="password"
             useRef={inputRef.oldPassword}
             needFeedback={false}
+            isRequired={true}
           />
           <FormInput
             id="newPassword"
@@ -167,10 +168,11 @@ export default function EditPasswordPage() {
             invalidPrompt2={!passwordMatch && "密碼不一致 "}
             minlength={userRules.password.min}
             maxlength={userRules.password.max}
+            isRequired={true}
           />
           <FormInput
             id="confirmNewPassword"
-            label="新密碼"
+            label="確認密碼"
             type="password"
             useRef={inputRef.confirmNewPassword}
             onChange={() => handleInputOnChange()}
@@ -178,6 +180,7 @@ export default function EditPasswordPage() {
             invalidPrompt2={!passwordMatch && "密碼不一致 "}
             minlength={userRules.password.min}
             maxlength={userRules.password.max}
+            isRequired={true}
           />
 
           <Container className="text-center">
