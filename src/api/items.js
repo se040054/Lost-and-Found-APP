@@ -44,3 +44,15 @@ export const postItem = async (form) => {
     return error.response.data
   }
 }
+
+
+export const getItem = async (id) => {
+  try {
+    console.log(apiBaseURL)
+    const { data } = await axios.get(`${apiBaseURL}/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+}

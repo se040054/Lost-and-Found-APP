@@ -5,7 +5,7 @@ import Header from "../../components/Assists/Header";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { defaultMerchantLogo } from "../../assets";
+import { defaultItemPhoto, defaultMerchantLogo } from "../../assets";
 import ImageInput from "../../components/Auth/ImageInput";
 import { itemRules } from "../../utils/inputRules";
 import Swal from "sweetalert2";
@@ -217,7 +217,7 @@ export default function CreateItemPage() {
             />
             <ImageInput
               id="photo"
-              defaultImage={defaultMerchantLogo}
+              defaultImage={defaultItemPhoto}
               useRef={inputRef.photo}
               isRequired={true}
               label={"上傳照片"}

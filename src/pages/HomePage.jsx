@@ -23,7 +23,11 @@ import {
 import { Link } from "react-router-dom";
 import { getCategories } from "../api/categories";
 import { PaginationControl } from "react-bootstrap-pagination-control";
-import { defaultAvatar, defaultMerchantLogo } from "../assets/";
+import {
+  defaultAvatar,
+  defaultItemPhoto,
+  defaultMerchantLogo,
+} from "../assets/";
 import { FaRegCommentDots } from "react-icons/fa6";
 const ITEM_AMOUNT_PER_PAGE = 12;
 
@@ -346,7 +350,7 @@ const ItemsWrapper = ({ item }) => {
       <Link to={`/items/${item.id}`}>
         <Card.Img
           variant="none" // 取消圖像的邊角radius
-          src={item.photo}
+          src={item.photo || defaultItemPhoto}
           style={{
             width: "100%",
             height: "300px",

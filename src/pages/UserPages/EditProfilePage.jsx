@@ -41,9 +41,12 @@ export default function EditProfilePage() {
     county: useRef(null),
   };
   const handleInputOnChange = (attr) => {
-    if (attr === "name") checkInput(inputRef.name.current, userRules.name.regex);
-    if (attr === "email") checkInput(inputRef.email.current, userRules.email.regex);
-    if (attr === "phone") checkInput(inputRef.phone.current, userRules.phone.regex);
+    if (attr === "name")
+      checkInput(inputRef.name.current, userRules.name.regex);
+    if (attr === "email")
+      checkInput(inputRef.email.current, userRules.email.regex);
+    if (attr === "phone")
+      checkInput(inputRef.phone.current, userRules.phone.regex);
     if (attr === "county")
       checkInput(inputRef.county.current, userRules.county.regex);
   };

@@ -16,7 +16,11 @@ import {
   Tabs,
 } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import { defaultAvatar, defaultMerchantLogo } from "../../assets";
+import {
+  defaultAvatar,
+  defaultItemPhoto,
+  defaultMerchantLogo,
+} from "../../assets";
 import { getMyFavorites } from "../../api/favorites";
 import {
   InfoRow,
@@ -50,6 +54,7 @@ export default function ProfilePage() {
         return error;
       }
     };
+
     fetchUserData();
   }, [userId]);
   useEffect(() => {
@@ -207,7 +212,7 @@ const ItemWrapper = ({ item }) => {
     <Link to={`/items/${item.id}`}>
       <Card className="mb-3" style={{ maxWidth: "540px" }}>
         <Card.Img
-          src={item.photo}
+          src={item.photo || defaultItemPhoto}
           alt="item-photo"
           fluid
           style={{

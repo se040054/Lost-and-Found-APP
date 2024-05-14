@@ -15,11 +15,15 @@ import {
   Tabs,
 } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import { defaultMerchantLogo } from "../../assets";
+import { defaultItemPhoto, defaultMerchantLogo } from "../../assets";
 import { getMerchant } from "../../api/merchants";
 import { FaPhoneAlt, FaUserCircle } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
-import { InfoRow, InformationContainerStyled, MainContainerStyled } from "../../components/common/profileStyled";
+import {
+  InfoRow,
+  InformationContainerStyled,
+  MainContainerStyled,
+} from "../../components/common/profileStyled";
 
 export default function MerchantInfoPage() {
   const { currentMember } = useAuth();
@@ -157,7 +161,7 @@ const ItemWrapper = ({ item }) => {
     <Link to={`/items/${item.id}`}>
       <Card className="mb-3" style={{ maxWidth: "540px" }}>
         <Card.Img
-          src={item.photo}
+          src={item.photo || defaultItemPhoto}
           alt="item-photo"
           style={{
             width: "auto",
