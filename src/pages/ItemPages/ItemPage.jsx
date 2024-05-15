@@ -22,14 +22,17 @@ import {
 
 import { FaMapMarkedAlt } from "react-icons/fa";
 import { MdOutlineInsertComment } from "react-icons/md";
+import { getCategory } from "../../api/categories";
 
 export default function ItemPage() {
   const [item, setItem] = useState(null);
   const [apiRes, setApiRes] = useState("loading");
+  const [category, setCategory] = useState([]);
   const { isLogin, currentMember } = useAuth();
+
   const itemId = useParams().id;
   useEffect(() => {
-    const fetchItem = async () => {
+    const fetchData = async () => {
       try {
         const data = await getItem(itemId);
         if (!data.apiData) {
@@ -37,8 +40,9 @@ export default function ItemPage() {
           setApiRes("false");
           return;
         }
+        const category = await getCategory(data.apiData.categoryId);
         setItem(data.apiData);
-
+        setCategory(category.apiData);
         setApiRes("success");
       } catch (error) {
         console.log(error);
@@ -46,8 +50,9 @@ export default function ItemPage() {
         return error;
       }
     };
-    fetchItem();
+    fetchData();
   }, [itemId]);
+
   return (
     <>
       <Header />
@@ -57,6 +62,7 @@ export default function ItemPage() {
             <InformationContainer
               item={item}
               currentMemberId={currentMember?.id}
+              category={category}
             />
             <CommentsContainer comments={item.Comments}></CommentsContainer>
           </>
@@ -89,7 +95,7 @@ const CommentsContainerStyled = styled.div`
   width: 80%;
 `;
 
-const InformationContainer = ({ item, currentMemberId }) => {
+const InformationContainer = ({ item, currentMemberId, category }) => {
   function stringToDate(rawData) {
     const splitArray = rawData.split("-");
     return `${splitArray[0]}年${splitArray[1]}月${splitArray[2]}日`;
@@ -97,7 +103,7 @@ const InformationContainer = ({ item, currentMemberId }) => {
   return (
     <ItemContainerStyled>
       {/* 商品圖片 */}
-      <Container className="m-0 p-0 float-start " style={{ width: "65%" }}>
+      <Container className="m-4 p-0 float-start " style={{ width: "55%" }}>
         <Image
           src={item.photo || defaultItemPhoto}
           thumbnail
@@ -110,7 +116,7 @@ const InformationContainer = ({ item, currentMemberId }) => {
         />
       </Container>
       {/* 商品文字 */}
-      <Container className="m-0 mb-5 p-5 float-end" style={{ width: "35%" }}>
+      <Container className="m-0 p-0 ml-3 float-end" style={{ width: "40%" }}>
         <InfoRow>
           <h2>{item.name}</h2>
         </InfoRow>
@@ -146,27 +152,39 @@ const InformationContainer = ({ item, currentMemberId }) => {
             </a>
           )}{" "}
         </InfoRow>
-        <InfoRow>
-          <h2>{item.category}</h2>
-        </InfoRow>
-        <InfoRow>
-          <FaMapMarkedAlt />
-          <p className="p-0 m-0 ms-1">{item.place || "無"}</p>
-        </InfoRow>
-        <InfoRow>
-          <p>拾獲日期：{stringToDate(item.findDate)}</p>
-        </InfoRow>
-        <InfoRow>
-          認領狀態 :
-          {item.isClaim ? (
-            <p className="p-0 m-0 ms-1 text-success">已認領</p>
-          ) : (
-            <p className="p-0 m-0 ms-1 text-primary">未認領</p>
-          )}
-        </InfoRow>
+        <Row>
+          <InfoRow>
+            <Col md={5}>分類：</Col>
+            <Col md={7}>{category.name}</Col>
+          </InfoRow>
+        </Row>
+        <Row>
+          <InfoRow>
+            <Col md={5}>拾獲地點:</Col>
+            <Col md={7}>{item.place || "無"}</Col>
+          </InfoRow>
+        </Row>
+        <Row>
+          <InfoRow>
+            <Col md={5}>拾獲日期：</Col>
+            <Col md={7}>{stringToDate(item.findDate)}</Col>
+          </InfoRow>
+        </Row>
+        <Row>
+          <InfoRow>
+            <Col md={5}>認領狀態 :</Col>
+            <Col md={7}>
+              {item.isClaim ? (
+                <p className="text-success m-0 p-0 ">已認領</p>
+              ) : (
+                <p className="text-primary m-0 p-0 ">未認領</p>
+              )}
+            </Col>
+          </InfoRow>
+        </Row>
       </Container>
-      <Container>
-        <InfoRow className="mt-5">
+      <Container className="mt-5 ms-3">
+        <InfoRow>
           <p> 物品描述：</p>
         </InfoRow>
 
@@ -200,7 +218,9 @@ const CommentsContainer = ({ comments }) => {
             <Accordion.Item eventKey="0">
               <Accordion.Header>
                 <InfoRow>
-                  <p className="p-0 m-0 me-2">查看全部 {comments.length} 則留言</p>
+                  <p className="p-0 m-0 me-2">
+                    查看全部 {comments.length} 則留言
+                  </p>
                   <MdOutlineInsertComment />
                 </InfoRow>
               </Accordion.Header>
@@ -239,7 +259,6 @@ const CommentWrapper = ({ comment }) => {
         </a>
       </Container>
       <Container className="d-flex align-center p-0 my-2">
-        {" "}
         {comment.text}
       </Container>
       <hr></hr>

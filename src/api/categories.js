@@ -10,5 +10,14 @@ export const getCategories = async () => {
     console.log(error)
     return error.response.data
   }
+}
 
+export const getCategory = async (id) => {
+  try {
+    const { data } = await axios.get(`${apiBaseURL}/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
 } 

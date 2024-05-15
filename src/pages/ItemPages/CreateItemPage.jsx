@@ -28,7 +28,7 @@ export default function CreateItemPage() {
   useEffect(() => {
     if (isLogin === "false") navigate("/login");
     if (isLogin === "success") {
-      const fetchMyMerchants = async () => {
+      const fetchData = async () => {
         try {
           const MerchantsData = await getUser(currentMember.id);
           setMerchants(MerchantsData.apiData.Merchants);
@@ -41,7 +41,7 @@ export default function CreateItemPage() {
           console.log(error);
         }
       };
-      fetchMyMerchants();
+      fetchData();
     }
   }, [isLogin, navigate, apiRes, currentMember?.id]);
   const inputRef = {

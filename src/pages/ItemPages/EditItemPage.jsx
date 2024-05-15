@@ -26,7 +26,7 @@ export default function EditItemPage() {
   const itemId = useParams().id;
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchMerchant = async () => {
+    const fetchData = async () => {
       if (isLogin === "false") navigate("/login");
       try {
         const data = await getItem(itemId);
@@ -54,7 +54,7 @@ export default function EditItemPage() {
         return error;
       }
     };
-    fetchMerchant();
+    fetchData();
   }, [itemId, isLogin, navigate, currentMember?.id]);
 
   const inputRef = {
