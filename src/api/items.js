@@ -56,3 +56,18 @@ export const getItem = async (id) => {
     return error.response.data
   }
 }
+
+
+export const editItem = async ({ id, form }) => {
+  try {
+    const { data } = await tokenInstance.put(`${apiBaseURL}/${id}`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data' //因為有file 記得改
+      }
+    })
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+}

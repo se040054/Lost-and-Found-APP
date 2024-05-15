@@ -12,6 +12,7 @@ import {
   EditMerchantPage,
   CreateItemPage,
   ItemPage,
+  EditItemPage,
 } from "./pages";
 import React from "react";
 import { GlobalStyles } from "./components/common/global";
@@ -44,6 +45,7 @@ function App() {
               {/* items */}
               <Route path="items/post" element={<CreateItemPage />} />
               <Route path="items/:id" element={<ItemPage />} />
+              <Route path="items/:id/edit" element={<EditItemPage />} />
               {/* <Route path="*" element={<Navigate to="home" />} /> */}
             </Routes>
           </AuthContextProvider>

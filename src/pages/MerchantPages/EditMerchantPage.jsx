@@ -31,8 +31,17 @@ export default function EditMerchantPage() {
           setApiRes("false");
           return;
         }
+        if (isLogin === "success" && data.apiData.userId !== currentMember.id) {
+          Swal.fire({
+            title: "權限不足!",
+            text: "不能修改別人的商家",
+            icon: "error",
+            confirmButtonText: "繼續",
+            willClose: () => navigate("/home"),
+          });
+        }
         setMerchant(data.apiData);
-        setApiRes("step1"); //加載完商家資料
+        setApiRes("success"); //加載完商家資料
       } catch (error) {
         console.log(error);
         setApiRes("false");
@@ -40,22 +49,8 @@ export default function EditMerchantPage() {
       }
     };
     fetchMerchant();
-  }, [merchantId, isLogin, navigate]);
-  useEffect(() => {
-    if (apiRes === "step1" && isLogin === "success") {
-      if (merchant.userId !== currentMember.id) {
-        Swal.fire({
-          title: "權限不足!",
-          text: "不能修改別人的商家",
-          icon: "error",
-          confirmButtonText: "繼續",
-          willClose: () => navigate("/home"),
-        });
-      } else {
-        setApiRes("success");
-      }
-    }
-  }, [merchant, apiRes, navigate, currentMember?.id, isLogin]);
+  }, [merchantId, isLogin, navigate, currentMember?.id]);
+
   const inputRef = {
     name: useRef(null),
     address: useRef(null),
@@ -158,7 +153,7 @@ export default function EditMerchantPage() {
         } else {
           Swal.fire({
             // 這個是API返回的失敗
-            title: "註冊失敗",
+            title: "申請商家失敗",
             text: data.message,
             icon: "error",
             confirmButtonText: "關閉",
