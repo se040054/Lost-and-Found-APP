@@ -51,3 +51,14 @@ export const editMerchant = async ({ id, form }) => {
     return error.response.data
   }
 }
+
+
+export const deleteMerchant = async (id) => {
+  try {
+    const { data } = await tokenInstance.delete(`${apiBaseURL}/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+}

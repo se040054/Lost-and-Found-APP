@@ -71,3 +71,14 @@ export const editItem = async ({ id, form }) => {
     return error.response.data
   }
 }
+
+
+export const deleteItem = async (id) => {
+  try {
+    const { data } = await tokenInstance.delete(`${apiBaseURL}/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+}
