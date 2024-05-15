@@ -199,7 +199,7 @@ export default function EditItemPage() {
             <SelectInput
               items={categories}
               text="選擇物品分類"
-              label="分類"
+              label="分類  (不選擇則維持原分類)"
               id="categoryId"
               useRef={inputRef.categoryId}
               defaultValue={item.categoryId}

@@ -93,21 +93,18 @@ export default function CreateItemPage() {
       merchantId: inputRef.merchantId.current.value.trim(),
     };
 
-    const checkValid = (form, rules) => {
+    const checkInValid = (form, rules) => {
       // 檢查值比較少且特殊所以不用迴圈
-      let validFalse = false;
-      if (!rules.name.regex.test(form.name)) validFalse = true;
-      if (!rules.place.regex.test(form.place)) validFalse = true;
-      if (form.description) {
-        if (!rules.description.regex.test(form.description)) validFalse = true;
-      }
-      if (!form.findDate) validFalse = true;
-      if (validFalse) return false;
+      if (!rules.name.regex.test(form.name)) return true;
+      else if (!rules.place.regex.test(form.place)) return true;
+      else if (form.description) {
+        if (!rules.description.regex.test(form.description)) return true;
+      } else if (!form.findDate) return true;
       if (form.categoryId.length === 0) {
         form.categoryId = "7"; // 先暫定為其他
       } else return true;
     };
-    if (checkValid(form, itemRules) === false) {
+    if (checkInValid(form, itemRules) === false) {
       Swal.fire({
         title: "刊登失敗!",
         text: "有資料錯誤",
