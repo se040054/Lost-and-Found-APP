@@ -144,12 +144,7 @@ export default function CreateItemPage() {
       }
     }
   };
-  const handleReset = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const form = document.querySelector("form");
-    form.reset();
-  };
+
   const handleCancel = (e) => {
     e.stopPropagation();
     e.preventDefault();
@@ -237,7 +232,7 @@ export default function CreateItemPage() {
               </StyledAuthButton>
               <StyledAuthButton
                 className="btn btn-danger"
-                onClick={(e) => handleReset(e)}
+                onClick={() => window.location.reload()}
               >
                 清空
               </StyledAuthButton>

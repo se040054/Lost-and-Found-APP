@@ -233,6 +233,12 @@ export default function EditMerchantPage() {
                 取消
               </StyledAuthButton>
               <StyledAuthButton
+                className="btn btn-danger"
+                onClick={(e) => window.location.reload()}
+              >
+                清空
+              </StyledAuthButton>
+              <StyledAuthButton
                 className="btn-success"
                 onClick={(e) => handleSubmit(e)}
               >
