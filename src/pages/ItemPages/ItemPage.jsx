@@ -10,8 +10,8 @@ import {
 import { InfoRow } from "../../components/common/profileStyled";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { getItem } from "../../api/items";
-import { useParams } from "react-router-dom";
+import { deleteItem, getItem } from "../../api/items";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Assists/Header";
 import styled from "styled-components";
 import {
@@ -22,13 +22,14 @@ import {
 
 import { MdOutlineInsertComment } from "react-icons/md";
 import { getCategory } from "../../api/categories";
+import Swal from "sweetalert2";
 
 export default function ItemPage() {
   const [item, setItem] = useState(null);
   const [apiRes, setApiRes] = useState("loading");
   const [category, setCategory] = useState([]);
   const { currentMember } = useAuth();
-
+  const navigate = useNavigate();
   const itemId = useParams().id;
   useEffect(() => {
     const fetchData = async () => {
@@ -51,7 +52,46 @@ export default function ItemPage() {
     };
     fetchData();
   }, [itemId]);
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: "確定要刪除物品嗎?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "刪除物品",
+      confirmButtonColor: "#dc3545",
+      cancelButtonText: `取消`,
+    });
+    if (result.isConfirmed) {
+      try {
+        const data = await deleteItem(item.id);
+        if (data.status === "success") {
+          Swal.fire({
+            title: "已刪除!",
+            text: "跳轉頁面",
+            confirmButtonText: "繼續",
+            willClose: () => navigate(`/users/${currentMember.id}`),
+          });
+        } else {
+          Swal.fire({
+            title: "刪除失敗!",
+            icon: "error",
+            text: data.message,
+            confirmButtonText: "繼續",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          title: "刪除失敗!",
+          icon: "error",
+          text: error.message,
+          confirmButtonText: "繼續",
+        });
+      }
+    }
+    if (result.isDenied) return;
 
+    console.log(result);
+  };
   return (
     <>
       <Header />
@@ -62,6 +102,7 @@ export default function ItemPage() {
               item={item}
               currentMemberId={currentMember?.id}
               category={category}
+              handleDelete={handleDelete}
             />
             <CommentsContainer comments={item.Comments}></CommentsContainer>
           </>
@@ -95,7 +136,12 @@ const CommentsContainerStyled = styled.div`
   width: 80%;
 `;
 
-const InformationContainer = ({ item, currentMemberId, category }) => {
+const InformationContainer = ({
+  item,
+  currentMemberId,
+  category,
+  handleDelete,
+}) => {
   function stringToDate(rawData) {
     const splitArray = rawData.split("-");
     return `${splitArray[0]}年${splitArray[1]}月${splitArray[2]}日`;
@@ -198,15 +244,13 @@ const InformationContainer = ({ item, currentMemberId, category }) => {
       </Container>{" "}
       {/*編輯按鈕 */}
       {item.userId === currentMemberId && (
-        <Container className="mt-5">
-          <InfoRow className="d-flex justify-content-center">
-            <Button
-              className="btn btn-success w-25"
-              href={`/items/${item.id}/edit`}
-            >
-              編輯物品資料
-            </Button>
-          </InfoRow>
+        <Container className="d-flex mt-5 justify-content-between">
+          <Button className="btn btn-success" href={`/items/${item.id}/edit`}>
+            編輯物品資料
+          </Button>
+          <Button className="btn btn-danger" onClick={(e) => handleDelete?.()}>
+            刪除物品
+          </Button>
         </Container>
       )}
     </ItemContainerStyled>
@@ -216,6 +260,7 @@ const InformationContainer = ({ item, currentMemberId, category }) => {
 const CommentsContainer = ({ comments }) => {
   return (
     <CommentsContainerStyled>
+      <hr />
       {comments.length === 0 && <h1> 目前沒有留言 ~ </h1>}
       {comments.length > 0 && (
         <>

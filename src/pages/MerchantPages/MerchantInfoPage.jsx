@@ -53,10 +53,10 @@ export default function MerchantInfoPage() {
 
   const handleDelete = async () => {
     const result = await Swal.fire({
-      title: "確定要刪除此商家嗎?",
+      title: "確定要刪除商家嗎?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "刪除此商家",
+      confirmButtonText: "刪除商家",
       confirmButtonColor: "#dc3545",
       cancelButtonText: `取消`,
     });
@@ -74,14 +74,15 @@ export default function MerchantInfoPage() {
         } else {
           Swal.fire({
             title: "刪除失敗!",
+            icon:'error',
             text: data.message,
             confirmButtonText: "繼續",
-            willClose: () => navigate(`/users/${currentMember.id}`),
           });
         }
       } catch (error) {
         Swal.fire({
           title: "刪除失敗!",
+          icon: "error",
           text: error.message,
           confirmButtonText: "繼續",
         });
@@ -159,7 +160,7 @@ const InformationContainer = ({ merchant, currentMemberId, handleDelete }) => {
             編輯商家資料
           </Button>
           <Button className="btn btn-danger" onClick={(e) => handleDelete?.()}>
-            刪除此商家
+            刪除商家
           </Button>
         </Container>
       )}
