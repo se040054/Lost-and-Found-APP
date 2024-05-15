@@ -14,6 +14,7 @@ export const GlobalStyles = createGlobalStyle`
     width:100%;
     height:100%;
     margin: 0;
+    margin-bottom:200px;
     padding: 0;
     font-family: BlinkMacSystemFont, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 

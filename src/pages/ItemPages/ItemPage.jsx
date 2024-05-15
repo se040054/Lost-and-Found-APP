@@ -20,7 +20,6 @@ import {
   defaultMerchantLogo,
 } from "../../assets";
 
-import { FaMapMarkedAlt } from "react-icons/fa";
 import { MdOutlineInsertComment } from "react-icons/md";
 import { getCategory } from "../../api/categories";
 
@@ -28,7 +27,7 @@ export default function ItemPage() {
   const [item, setItem] = useState(null);
   const [apiRes, setApiRes] = useState("loading");
   const [category, setCategory] = useState([]);
-  const { isLogin, currentMember } = useAuth();
+  const { currentMember } = useAuth();
 
   const itemId = useParams().id;
   useEffect(() => {
@@ -92,6 +91,7 @@ const ItemContainerStyled = styled.div`
 `;
 
 const CommentsContainerStyled = styled.div`
+  margin-top: 50px;
   width: 80%;
 `;
 
@@ -102,88 +102,92 @@ const InformationContainer = ({ item, currentMemberId, category }) => {
   }
   return (
     <ItemContainerStyled>
-      {/* 商品圖片 */}
-      <Container className="m-4 p-0 float-start " style={{ width: "55%" }}>
-        <Image
-          src={item.photo || defaultItemPhoto}
-          thumbnail
-          style={{
-            border: "1px solid gray",
-            objectFit: "contain",
-            width: "860px",
-            height: "430px",
-          }}
-        />
-      </Container>
-      {/* 商品文字 */}
-      <Container className="m-0 p-0 ml-3 float-end" style={{ width: "40%" }}>
-        <InfoRow>
-          <h2>{item.name}</h2>
-        </InfoRow>
-        <InfoRow>
-          {item.Merchant ? (
-            <a href={`/merchants/${item.Merchant.id}`}>
-              <Image
-                src={item.Merchant.logo || defaultMerchantLogo}
-                alt="logo"
-                style={{
-                  marginRight: "6px",
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                }}
-              />
-              <small>{item.Merchant.name} </small>
-            </a>
-          ) : (
-            <a href={`/users/${item.User.id}`}>
-              <Image
-                src={item.User.avatar || defaultAvatar}
-                alt="avatar"
-                style={{
-                  marginRight: "6px",
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                }}
-              />
+      {/* 上方區塊 */}
+      <Container className="d-flex">
+        {/* 商品圖片 */}
+        <Container className="m-0 p-0  " style={{ width: "55%" }}>
+          <Image
+            src={item.photo || defaultItemPhoto}
+            thumbnail
+            style={{
+              border: "1px solid gray",
+              objectFit: "contain",
+              width: "860px",
+              height: "430px",
+            }}
+          />
+        </Container>
+        {/* 商品文字 */}
+        <Container className="m-0 p-0 ms-5" style={{ width: "40%" }}>
+          <InfoRow>
+            <h2>{item.name}</h2>
+          </InfoRow>
+          <InfoRow>
+            {item.Merchant ? (
+              <a href={`/merchants/${item.Merchant.id}`}>
+                <Image
+                  src={item.Merchant.logo || defaultMerchantLogo}
+                  alt="logo"
+                  style={{
+                    marginRight: "6px",
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                  }}
+                />
+                <small>{item.Merchant.name} </small>
+              </a>
+            ) : (
+              <a href={`/users/${item.User.id}`}>
+                <Image
+                  src={item.User.avatar || defaultAvatar}
+                  alt="avatar"
+                  style={{
+                    marginRight: "6px",
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                  }}
+                />
 
-              <small>{item.User.name}</small>
-            </a>
-          )}{" "}
-        </InfoRow>
-        <Row>
-          <InfoRow>
-            <Col md={5}>分類：</Col>
-            <Col md={7}>{category.name}</Col>
+                <small>{item.User.name}</small>
+              </a>
+            )}{" "}
           </InfoRow>
-        </Row>
-        <Row>
-          <InfoRow>
-            <Col md={5}>拾獲地點:</Col>
-            <Col md={7}>{item.place || "無"}</Col>
-          </InfoRow>
-        </Row>
-        <Row>
-          <InfoRow>
-            <Col md={5}>拾獲日期：</Col>
-            <Col md={7}>{stringToDate(item.findDate)}</Col>
-          </InfoRow>
-        </Row>
-        <Row>
-          <InfoRow>
-            <Col md={5}>認領狀態 :</Col>
-            <Col md={7}>
-              {item.isClaim ? (
-                <p className="text-success m-0 p-0 ">已認領</p>
-              ) : (
-                <p className="text-primary m-0 p-0 ">未認領</p>
-              )}
-            </Col>
-          </InfoRow>
-        </Row>
+          <Row>
+            <InfoRow>
+              <Col md={5}>分類：</Col>
+              <Col md={7}>{category?.name || "無"}</Col>
+            </InfoRow>
+          </Row>
+          <Row>
+            <InfoRow>
+              <Col md={5}>拾獲地點:</Col>
+              <Col md={7}>{item.place || "無"}</Col>
+            </InfoRow>
+          </Row>
+          <Row>
+            <InfoRow>
+              <Col md={5}>拾獲日期：</Col>
+              <Col md={7}>{stringToDate(item.findDate)}</Col>
+            </InfoRow>
+          </Row>
+          <Row>
+            <InfoRow>
+              <Col md={5}>認領狀態 :</Col>
+              <Col md={7}>
+                {item.isClaim ? (
+                  <p className="text-success m-0 p-0 ">已認領</p>
+                ) : (
+                  <p className="text-primary m-0 p-0 ">未認領</p>
+                )}
+              </Col>
+            </InfoRow>
+          </Row>
+        </Container>
       </Container>
-      <Container className="mt-5 ms-3">
+      {/* 下方描述 */}
+      <Container>
         <InfoRow>
           <p> 物品描述：</p>
         </InfoRow>
@@ -191,9 +195,10 @@ const InformationContainer = ({ item, currentMemberId, category }) => {
         <InfoRow>
           <p>{item.description || "無"}</p>
         </InfoRow>
-      </Container>
+      </Container>{" "}
+      {/*編輯按鈕 */}
       {item.userId === currentMemberId && (
-        <Container className=" p-5">
+        <Container className="mt-5">
           <InfoRow className="d-flex justify-content-center">
             <Button
               className="btn btn-success w-25"

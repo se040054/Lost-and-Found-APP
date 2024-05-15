@@ -216,7 +216,6 @@ export default function CreateItemPage() {
               id="photo"
               defaultImage={defaultItemPhoto}
               useRef={inputRef.photo}
-              isRequired={true}
               label={"上傳照片"}
             />
             <DateInput
