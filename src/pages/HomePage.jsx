@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import React from "react";
 import Header from "../components/Assists/Header";
 import { FaSearch, FaFilter } from "react-icons/fa";
@@ -29,6 +29,10 @@ import {
   defaultMerchantLogo,
 } from "../assets/";
 import { FaRegCommentDots } from "react-icons/fa6";
+import { deleteFavorite, getMyFavorites, postFavorite } from "../api/favorites";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
+import { useAuth } from "../context/AuthContext";
+
 const ITEM_AMOUNT_PER_PAGE = 12;
 
 const MainContainerStyled = styled.div`
@@ -66,10 +70,13 @@ export default function HomePage() {
   const [category, setCategory] = useState(null); // 分類的格式為string，id+name(1金錢財物)，目前eventKey物件會產生問題
   const [search, setSearch] = useState(null);
   const [items, setItems] = useState([]);
+  const [favoritesId, setFavoritesId] = useState([]);
   const [totalPage, setTotalPage] = useState(null);
-  const [res, setRes] = useState("loading");
+  const [apiRes, setApiRes] = useState("loading");
+  const { isLogin } = useAuth();
   // 目前構思，由於items物品不直接更動但會受其他組件影響，Effect放置於父元件
-
+  // const theme = useTheme();
+  // console.log("主題" + JSON.stringify(theme));
   useEffect(() => {
     // 當你新增篩選時 page應該要返回第一頁
     setPage(1);
@@ -79,31 +86,51 @@ export default function HomePage() {
     //當新增篩選或換頁時fetch資料
     const fetchItems = async () => {
       try {
-        const data = await getItems({
+        const ItemData = await getItems({
           page,
           category: category?.substring(0, 1),
           search,
         });
-        if (data.apiData.items.length === 0) {
-          setRes("empty");
+        if (ItemData.apiData.items.length === 0) {
+          setApiRes("empty");
           setItems(null);
           return;
         }
-        setItems(data.apiData.items);
-        setTotalPage(data.apiData.totalPage);
-        setRes("success");
+        const favoriteData = await getMyFavorites();
+        const favoritesId = favoriteData.apiData.map((favorite) => favorite.id);
+        setItems(ItemData.apiData.items);
+        setTotalPage(ItemData.apiData.totalPage);
+        setFavoritesId(favoritesId);
+        setApiRes("success");
+        console.log("物品" + ItemData.apiData.items);
+        console.log("收藏ID" + favoritesId);
       } catch (error) {
-        setRes("false");
+        console.log(error);
+        setApiRes("false");
       }
     };
     fetchItems();
-  }, [category, search, page]);
+    if (isLogin === "success") {
+      fetchItems();
+    }
+  }, [category, search, page, isLogin]);
 
   const cleanSearch = () => {
     setSearch(null);
   };
   const cleanCategory = () => {
     setCategory(null);
+  };
+
+  const handleFavorite = (favoriteId) => {
+    // 因為收藏可能是短時間頻繁的操作，在確保與後端一致的情況下，不重新fetch
+    if (favoritesId.includes(favoriteId)) {
+      console.log("移除收藏" + favoriteId);
+      setFavoritesId(favoritesId.filter((id) => id !== favoriteId));
+    } else {
+      console.log("新增收藏" + favoriteId);
+      setFavoritesId([...favoritesId, favoriteId]);
+    }
   };
   return (
     <>
@@ -156,7 +183,12 @@ export default function HomePage() {
         )}
 
         {/* 物品 */}
-        <ItemsContainer items={items} res={res}></ItemsContainer>
+        <ItemsContainer
+          items={items}
+          apiRes={apiRes}
+          favoritesId={favoritesId}
+          handleFavorite={handleFavorite}
+        ></ItemsContainer>
 
         <PaginationContainer
           page={page}
@@ -269,19 +301,28 @@ const SearchBar = ({ handleSubmit }) => {
   );
 };
 
-const ItemsContainer = ({ items, res }) => {
+const ItemsContainer = ({ items, apiRes, favoritesId, handleFavorite }) => {
   return (
     <CardGroup className="mt-5">
       {/* CardGroup會統一掌管卡片大小 */}
-      {res === "empty" && <h3>沒有符合的項目</h3>}
-      {res === "loading " && <Spinner animation="border" variant="success" />}
-      {res === "success" && (
-        <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-4">
+      {apiRes === "empty" && <h3>沒有符合的項目</h3>}
+      {apiRes === "loading " && (
+        <Spinner animation="border" variant="success" />
+      )}
+      {apiRes === "success" && (
+        <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-3">
           {/* 這些屬性是一rows 在RWD響應下有幾個元素 */}
           {items.map((item) => {
             return (
               <Col key={item.id}>
-                <ItemsWrapper item={item}></ItemsWrapper>
+                <Container fluid className="position-relative p-0 m-0">
+                  <ItemsWrapper item={item}></ItemsWrapper>
+                  <FavoriteIcon
+                    itemId={item.id}
+                    isFavorite={favoritesId.includes(item.id)}
+                    handleClick={handleFavorite}
+                  ></FavoriteIcon>
+                </Container>
               </Col>
             );
           })}
@@ -387,6 +428,58 @@ const ItemsWrapper = ({ item }) => {
         </Card.Footer>
       </Link>
     </Card>
+  );
+};
+
+const FavoriteIcon = ({ itemId, isFavorite, handleClick }) => {
+  const handleFavorite = async (itemId) => {
+    try {
+      if (isFavorite) {
+        const data = await deleteFavorite(itemId);
+        if (data.status === "success") {
+          handleClick?.(itemId);
+        }
+      } else {
+        const data = await postFavorite(itemId);
+        if (data.status === "success") {
+          handleClick?.(itemId);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error.message);
+    }
+  };
+  return (
+    <>
+      {isFavorite ? (
+        <MdFavorite
+          className="position-absolute m-0 p-1"
+          style={{
+            top: "10px",
+            right: "10px",
+            width: "38px",
+            height: "38px",
+            color: "#e3395b",
+            cursor: "pointer",
+          }}
+          onClick={() => handleFavorite?.(itemId)}
+        />
+      ) : (
+        <MdFavoriteBorder
+          className="position-absolute m-0 p-1"
+          style={{
+            top: "10px",
+            right: "10px",
+            width: "38px",
+            height: "38px",
+            color: "#e3395b",
+            cursor: "pointer",
+          }}
+          onClick={() => handleFavorite?.(itemId)}
+        />
+      )}
+    </>
   );
 };
 

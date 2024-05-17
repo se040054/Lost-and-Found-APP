@@ -23,4 +23,26 @@ export const getMyFavorites = async () => {
     return error.response.data
   }
 
+}
+
+export const postFavorite = async (itemId) => {
+  try {
+    const { data } = await tokenInstance.post(`${apiBaseURL}/${itemId}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+
+}
+
+export const deleteFavorite = async (itemId) => {
+  try {
+    const { data } = await tokenInstance.delete(`${apiBaseURL}/${itemId}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+
 } 

@@ -16,7 +16,6 @@ tokenInstance.interceptors.request.use(function (config) {
 
 export const getItems = async ({ page = 1, category = null, search = null }) => {
   try {
-    console.log(apiBaseURL)
     const { data } = await axios.get(`${apiBaseURL}`, {
       params: {
         page,
