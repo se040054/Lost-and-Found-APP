@@ -20,7 +20,7 @@ import {
   Container,
 } from "react-bootstrap";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getCategories } from "../api/categories";
 import { PaginationControl } from "react-bootstrap-pagination-control";
 import {
@@ -31,6 +31,7 @@ import {
 import { FaRegCommentDots } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
 import { AbsoluteFavoriteButton } from "../components/Assists/FavoriteButton";
+import Swal from "sweetalert2";
 
 const ITEM_AMOUNT_PER_PAGE = 12;
 
@@ -57,7 +58,7 @@ const BadgesContainerStyled = styled.div`
   margin-top: 20px;
 `;
 
-const CreateContainer = styled.div`
+const CreateContainerStyled = styled.div`
   display: flex;
   justify-content: space-evenly;
   font-size: 1rem;
@@ -72,6 +73,7 @@ export default function HomePage() {
   const [totalPage, setTotalPage] = useState(null);
   const [apiRes, setApiRes] = useState("loading");
   const { isLogin } = useAuth();
+  const navigate = useNavigate();
   // 目前構思，由於items物品不直接更動但會受其他組件影響，Effect放置於父元件
   // const theme = useTheme();
   // console.log("主題" + JSON.stringify(theme));
@@ -136,20 +138,7 @@ export default function HomePage() {
               </FilterContainer>
             </Col>
             <Col className="col-md-3 offset-md-1">
-              <CreateContainer>
-                <Link to="/items/post">
-                  <Button variant="success">
-                    <FiPlusCircle className="me-1 mb-1" size="1rem" />
-                    刊登物品
-                  </Button>
-                </Link>
-                <Link to="/merchants/post">
-                  <Button variant="success">
-                    <FiPlusCircle className="me-1 mb-1" size="1rem" />
-                    申請商家
-                  </Button>
-                </Link>
-              </CreateContainer>
+              <CreateContainer isLogin={isLogin} navigate={navigate} />
             </Col>
           </Row>
         </Container>
@@ -276,6 +265,53 @@ const SearchBar = ({ handleSubmit }) => {
         <FaSearch />
       </button>
     </>
+  );
+};
+
+const CreateContainer = ({ isLogin, navigate }) => {
+  const handleCreateItemClick = async () => {
+    if (isLogin !== "success") {
+      const result = await Swal.fire({
+        title: "尚未登入!",
+        text: "登入後可使用刊登功能，要馬上登入嗎?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "登入",
+        cancelButtonText: "取消",
+      });
+      if (result.isConfirmed) navigate("/login");
+      if (result.isDenied) return;
+    } else {
+      navigate("/items/post");
+    }
+  };
+  const handleCreateMerchantClick = async () => {
+    if (isLogin !== "success") {
+      const result = await Swal.fire({
+        title: "尚未登入!",
+        text: "登入後可使用商家功能，要馬上登入嗎?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "登入",
+        cancelButtonText: "取消",
+      });
+      if (result.isConfirmed) navigate("/login");
+      if (result.isDenied) return;
+    } else {
+      navigate("/merchants/post");
+    }
+  };
+  return (
+    <CreateContainerStyled>
+      <Button variant="success" onClick={() => handleCreateItemClick?.()}>
+        <FiPlusCircle className="me-1 mb-1" size="1rem" />
+        刊登物品
+      </Button>
+      <Button variant="success" onClick={() => handleCreateMerchantClick?.()}>
+        <FiPlusCircle className="me-1 mb-1" size="1rem" />
+        申請商家
+      </Button>
+    </CreateContainerStyled>
   );
 };
 
