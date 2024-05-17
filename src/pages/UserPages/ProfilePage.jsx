@@ -27,7 +27,7 @@ import {
   InformationContainerStyled,
   MainContainerStyled,
 } from "../../components/common/profileStyled";
-import { FaPhoneAlt, FaUserCircle } from "react-icons/fa";
+import { FaPhoneAlt } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
 export default function ProfilePage() {
@@ -46,46 +46,20 @@ export default function ProfilePage() {
           return;
         }
         setProfile(data.apiData);
-        setApiRes("step1"); //加載完個人資料
-        console.log(apiRes, "加載完1階段");
+        if (profile?.id === currentMember?.id) {
+          const data = await getMyFavorites();
+          setFavorites(data.apiData);
+        }
+        setApiRes("success");
       } catch (error) {
         console.log(error);
         setApiRes("false");
         return error;
       }
     };
-
     fetchUserData();
-  }, [userId]);
-  useEffect(() => {
-    // 效果要分開使用，因為setRes 在一次渲染只會改變一次 放在一起寫會導致res錯亂
-    if (apiRes === "step1") {
-      //加載完個人資料後加載收藏
-      if (profile?.id === currentMember?.id) {
-        try {
-          const fetchFavorites = async () => {
-            const data = await getMyFavorites();
-            setFavorites(data.apiData);
-            setApiRes("success");
-            console.log(apiRes, "加載完2階段");
-          };
+  }, [userId, apiRes, currentMember?.id, profile?.id]);
 
-          fetchFavorites();
-        } catch (error) {
-          console.log(error);
-          setFavorites(null);
-          setApiRes("false");
-          return error;
-        }
-      } else {
-        setApiRes("success");
-      }
-    }
-    if (apiRes === "false") {
-      console.log(profile, favorites || null);
-    }
-    console.log(apiRes);
-  }, [profile]);
   return (
     <>
       <Header />
