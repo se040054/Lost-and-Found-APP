@@ -30,12 +30,13 @@ import {
 import { FaPhoneAlt } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
+import { AbsoluteFavoriteButton } from "../../components/Assists/FavoriteButton";
 export default function ProfilePage() {
   const { currentMember } = useAuth();
   const userId = useParams().id;
   const [profile, setProfile] = useState();
   const [apiRes, setApiRes] = useState("loading"); // api 有三種狀態，未回傳，回傳成功，回傳失敗 ，避免Effect執行前頁面先渲染錯誤結果
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState([]); // 注意這個收藏是物品，而非context的id陣列
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -166,7 +167,10 @@ const ItemsContainer = ({ items }) => {
           {items.map((item) => {
             return (
               <Col key={item.id}>
-                <ItemWrapper item={item}></ItemWrapper>
+                <Container className="position-relative p-0 m-0">
+                  <ItemWrapper item={item}></ItemWrapper>
+                  <AbsoluteFavoriteButton itemId={item.id} />
+                </Container>
               </Col>
             );
           })}

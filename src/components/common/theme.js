@@ -9,7 +9,9 @@ export const lightTheme = {
   containerBackground: '#FFF',
   inputContainerBackground: '#FFF',
   inputBackground: '#FFF',
-  inputContainerBorder: 'gray'
+  inputContainerBorder: 'gray',
+  heartBackground: '#fcfcfc',
+  heartBorder: '#1a1a1a'
 }
 
 export const darkTheme = {
@@ -22,5 +24,7 @@ export const darkTheme = {
   background: '#000',
   containerBackground: '#272727',
   inputContainerBackground: '#D9D9D9',
-  inputBackground: '#f1ffe9'
+  inputBackground: '#f1ffe9',
+  heartBackground: '#1a1a1a',
+  heartBorder: '#fcfcfc'
 }

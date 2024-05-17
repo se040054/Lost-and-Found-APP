@@ -24,6 +24,7 @@ import {
   MainContainerStyled,
 } from "../../components/common/profileStyled";
 import Swal from "sweetalert2";
+import { AbsoluteFavoriteButton } from "../../components/Assists/FavoriteButton";
 
 export default function MerchantInfoPage() {
   const { currentMember } = useAuth();
@@ -74,7 +75,7 @@ export default function MerchantInfoPage() {
         } else {
           Swal.fire({
             title: "刪除失敗!",
-            icon:'error',
+            icon: "error",
             text: data.message,
             confirmButtonText: "繼續",
           });
@@ -189,7 +190,10 @@ const ItemsContainer = ({ items }) => {
           {items.map((item) => {
             return (
               <Col key={item.id}>
-                <ItemWrapper item={item}></ItemWrapper>
+                <Container className="position-relative m-0 p-0">
+                  <ItemWrapper item={item}></ItemWrapper>
+                  <AbsoluteFavoriteButton itemId={item.id} />
+                </Container>
               </Col>
             );
           })}

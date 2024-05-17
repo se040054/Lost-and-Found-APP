@@ -23,6 +23,9 @@ import {
 import { MdOutlineInsertComment } from "react-icons/md";
 import { getCategory } from "../../api/categories";
 import Swal from "sweetalert2";
+import FavoriteButton, {
+  StaticFavoriteButton,
+} from "../../components/Assists/FavoriteButton";
 
 export default function ItemPage() {
   const [item, setItem] = useState(null);
@@ -227,6 +230,14 @@ const InformationContainer = ({
                 ) : (
                   <p className="text-primary m-0 p-0 ">未認領</p>
                 )}
+              </Col>
+            </InfoRow>
+          </Row>
+          <Row>
+            <InfoRow>
+              <Col md={5}>收藏：</Col>
+              <Col md={7}>
+                <StaticFavoriteButton itemId={item.id} />
               </Col>
             </InfoRow>
           </Row>

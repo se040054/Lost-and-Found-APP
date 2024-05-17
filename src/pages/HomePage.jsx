@@ -29,9 +29,8 @@ import {
   defaultMerchantLogo,
 } from "../assets/";
 import { FaRegCommentDots } from "react-icons/fa6";
-import { deleteFavorite, getMyFavorites, postFavorite } from "../api/favorites";
-import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import { useAuth } from "../context/AuthContext";
+import { AbsoluteFavoriteButton } from "../components/Assists/FavoriteButton";
 
 const ITEM_AMOUNT_PER_PAGE = 12;
 
@@ -70,7 +69,6 @@ export default function HomePage() {
   const [category, setCategory] = useState(null); // 分類的格式為string，id+name(1金錢財物)，目前eventKey物件會產生問題
   const [search, setSearch] = useState(null);
   const [items, setItems] = useState([]);
-  const [favoritesId, setFavoritesId] = useState([]);
   const [totalPage, setTotalPage] = useState(null);
   const [apiRes, setApiRes] = useState("loading");
   const { isLogin } = useAuth();
@@ -96,14 +94,9 @@ export default function HomePage() {
           setItems(null);
           return;
         }
-        const favoriteData = await getMyFavorites();
-        const favoritesId = favoriteData.apiData.map((favorite) => favorite.id);
         setItems(ItemData.apiData.items);
         setTotalPage(ItemData.apiData.totalPage);
-        setFavoritesId(favoritesId);
         setApiRes("success");
-        console.log("物品" + ItemData.apiData.items);
-        console.log("收藏ID" + favoritesId);
       } catch (error) {
         console.log(error);
         setApiRes("false");
@@ -122,16 +115,6 @@ export default function HomePage() {
     setCategory(null);
   };
 
-  const handleFavorite = (favoriteId) => {
-    // 因為收藏可能是短時間頻繁的操作，在確保與後端一致的情況下，不重新fetch
-    if (favoritesId.includes(favoriteId)) {
-      console.log("移除收藏" + favoriteId);
-      setFavoritesId(favoritesId.filter((id) => id !== favoriteId));
-    } else {
-      console.log("新增收藏" + favoriteId);
-      setFavoritesId([...favoritesId, favoriteId]);
-    }
-  };
   return (
     <>
       {/* 導覽列 */}
@@ -183,12 +166,7 @@ export default function HomePage() {
         )}
 
         {/* 物品 */}
-        <ItemsContainer
-          items={items}
-          apiRes={apiRes}
-          favoritesId={favoritesId}
-          handleFavorite={handleFavorite}
-        ></ItemsContainer>
+        <ItemsContainer items={items} apiRes={apiRes}></ItemsContainer>
 
         <PaginationContainer
           page={page}
@@ -301,7 +279,7 @@ const SearchBar = ({ handleSubmit }) => {
   );
 };
 
-const ItemsContainer = ({ items, apiRes, favoritesId, handleFavorite }) => {
+const ItemsContainer = ({ items, apiRes }) => {
   return (
     <CardGroup className="mt-5">
       {/* CardGroup會統一掌管卡片大小 */}
@@ -315,13 +293,9 @@ const ItemsContainer = ({ items, apiRes, favoritesId, handleFavorite }) => {
           {items.map((item) => {
             return (
               <Col key={item.id}>
-                <Container fluid className="position-relative p-0 m-0">
+                <Container className="position-relative p-0 m-0">
                   <ItemsWrapper item={item}></ItemsWrapper>
-                  <FavoriteIcon
-                    itemId={item.id}
-                    isFavorite={favoritesId.includes(item.id)}
-                    handleClick={handleFavorite}
-                  ></FavoriteIcon>
+                  <AbsoluteFavoriteButton itemId={item.id} />
                 </Container>
               </Col>
             );
@@ -428,58 +402,6 @@ const ItemsWrapper = ({ item }) => {
         </Card.Footer>
       </Link>
     </Card>
-  );
-};
-
-const FavoriteIcon = ({ itemId, isFavorite, handleClick }) => {
-  const handleFavorite = async (itemId) => {
-    try {
-      if (isFavorite) {
-        const data = await deleteFavorite(itemId);
-        if (data.status === "success") {
-          handleClick?.(itemId);
-        }
-      } else {
-        const data = await postFavorite(itemId);
-        if (data.status === "success") {
-          handleClick?.(itemId);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-      alert(error.message);
-    }
-  };
-  return (
-    <>
-      {isFavorite ? (
-        <MdFavorite
-          className="position-absolute m-0 p-1"
-          style={{
-            top: "10px",
-            right: "10px",
-            width: "38px",
-            height: "38px",
-            color: "#e3395b",
-            cursor: "pointer",
-          }}
-          onClick={() => handleFavorite?.(itemId)}
-        />
-      ) : (
-        <MdFavoriteBorder
-          className="position-absolute m-0 p-1"
-          style={{
-            top: "10px",
-            right: "10px",
-            width: "38px",
-            height: "38px",
-            color: "#e3395b",
-            cursor: "pointer",
-          }}
-          onClick={() => handleFavorite?.(itemId)}
-        />
-      )}
-    </>
   );
 };
 
