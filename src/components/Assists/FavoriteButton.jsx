@@ -65,18 +65,33 @@ const Heart = styled.div`
 
 // 普通定位按鈕
 export const StaticFavoriteButton = ({ itemId }) => {
+  const { isLogin } = useAuth();
   const { favoriteItemsId, addFavorite, removeFavorite } = useFavorite();
   const isFavorite = favoriteItemsId.includes(itemId);
+  const navigate = useNavigate();
   const handleFavorite = async (itemId) => {
-    try {
-      if (isFavorite) {
-        await removeFavorite(itemId);
-      } else {
-        await addFavorite(itemId);
+    if (isLogin !== "success") {
+      const result = await Swal.fire({
+        title: "尚未登入!",
+        text: "登入後可使用收藏功能，要馬上登入嗎?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "登入",
+        cancelButtonText: "取消",
+      });
+      if (result.isConfirmed) navigate("/login");
+      if (result.isDenied) return;
+    } else {
+      try {
+        if (isFavorite) {
+          await removeFavorite(itemId);
+        } else {
+          await addFavorite(itemId);
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error.message);
       }
-    } catch (error) {
-      console.log(error);
-      alert(error.message);
     }
   };
   return (
