@@ -28,7 +28,7 @@ import Swal from "sweetalert2";
 import FavoriteButton, {
   StaticFavoriteButton,
 } from "../../components/Assists/FavoriteButton";
-import { postComment } from "../../api/comment";
+import { deleteComment, postComment } from "../../api/comment";
 
 export default function ItemPage() {
   const [item, setItem] = useState(null);
@@ -134,7 +134,7 @@ export default function ItemPage() {
               category={category}
               handleDelete={handleDelete}
             />
-            <CommentsContainer comments={item.Comments} />
+            <CommentsContainer comments={item.Comments} refetch={setPost} />
             <PostComment
               userAvatar={currentMember?.avatar || defaultAvatar}
               navigate={navigate}
@@ -302,7 +302,7 @@ const InformationContainer = ({
   );
 };
 
-const CommentsContainer = ({ comments }) => {
+const CommentsContainer = ({ comments, refetch }) => {
   return (
     <CommentsContainerStyled>
       <hr />
@@ -321,7 +321,12 @@ const CommentsContainer = ({ comments }) => {
               </Accordion.Header>
               <Accordion.Body>
                 {comments.map((comment) => {
-                  return <CommentWrapper comment={comment}></CommentWrapper>;
+                  return (
+                    <CommentWrapper
+                      refetch={refetch}
+                      comment={comment}
+                    ></CommentWrapper>
+                  );
                 })}
               </Accordion.Body>{" "}
             </Accordion.Item>
@@ -332,7 +337,54 @@ const CommentsContainer = ({ comments }) => {
   );
 };
 
-const CommentWrapper = ({ comment }) => {
+const CommentWrapper = ({ comment, refetch }) => {
+  // 因為需要多層傳遞 改再子曾直接取用auth
+  const { currentMember } = useAuth();
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "bottom",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+  const handleClick = async (commentId) => {
+    const result = await Swal.fire({
+      title: "確定刪除留言?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "刪除",
+      cancelButtonText: "取消",
+    });
+    if (result.isConfirmed) deletePost(commentId);
+    else return;
+  };
+  const deletePost = async (commentId) => {
+    try {
+      const data = await deleteComment(commentId);
+      if (data.status === "success") {
+        Toast.fire({
+          icon: "success",
+          title: "已刪除留言",
+        });
+        refetch("yes");
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: "刪除失敗",
+        });
+      }
+    } catch (error) {
+      Toast.fire({
+        icon: "error",
+        title: `刪除失敗: ${error.message}`,
+      });
+    }
+  };
   return (
     <Accordion.Body>
       <Container className="d-flex align-center p-0 m-0">
@@ -353,9 +405,19 @@ const CommentWrapper = ({ comment }) => {
           <h5 className="font-weight-bold h5-0 m-0">{comment.User.name}：</h5>
         </a>
       </Container>
-      <Container className="d-flex align-center p-0 my-2">
+      <Container className="d-flex align-items-center justify-content-between p-0 my-2">
         {comment.text}
+
+        {currentMember?.id === comment.userId && (
+          <Button
+            className="btn-danger m-0 py-1 px-2"
+            onClick={() => handleClick?.(comment.id)}
+          >
+            刪除
+          </Button>
+        )}
       </Container>
+
       <hr></hr>
     </Accordion.Body>
   );

@@ -16,9 +16,19 @@ tokenInstance.interceptors.request.use(function (config) {
 });
 
 
-export const postComment = async ({itemId, text}) => {
+export const postComment = async ({ itemId, text }) => {
   try {
     const { data } = await tokenInstance.post(`${apiBaseURL}/${itemId}`, { text })
+    return data
+  } catch (error) {
+    console.log(error)
+    return error.response.data
+  }
+}
+
+export const deleteComment = async (id) => {
+  try {
+    const { data } = await tokenInstance.delete(`${apiBaseURL}/${id}`)
     return data
   } catch (error) {
     console.log(error)
