@@ -3,7 +3,9 @@ import {
   Button,
   Col,
   Container,
+  Form,
   Image,
+  InputGroup,
   Row,
   Spinner,
 } from "react-bootstrap";
@@ -26,15 +28,18 @@ import Swal from "sweetalert2";
 import FavoriteButton, {
   StaticFavoriteButton,
 } from "../../components/Assists/FavoriteButton";
+import { postComment } from "../../api/comment";
 
 export default function ItemPage() {
   const [item, setItem] = useState(null);
   const [apiRes, setApiRes] = useState("loading");
   const [category, setCategory] = useState([]);
-  const { currentMember } = useAuth();
+  const { isLogin, currentMember } = useAuth();
+  const [post, setPost] = useState("no"); // 這個狀態本身沒有意義，用來在送出留言後抓取Item.Comments
   const navigate = useNavigate();
   const itemId = useParams().id;
   useEffect(() => {
+    // 進入頁面時抓取物品跟分類資料的效果
     const fetchData = async () => {
       try {
         const data = await getItem(itemId);
@@ -55,6 +60,28 @@ export default function ItemPage() {
     };
     fetchData();
   }, [itemId]);
+  useEffect(() => {
+    //用來更新留言後的物品，重新取得留言
+    const fetchData = async () => {
+      try {
+        const data = await getItem(itemId);
+        if (!data.apiData) {
+          setItem(null);
+          setApiRes("false");
+          return;
+        } else {
+          setApiRes("success");
+          setItem(data.apiData);
+          setPost("no");
+        }
+      } catch (error) {
+        console.log(error);
+        setApiRes("false");
+        return error;
+      }
+    };
+    fetchData();
+  }, [post, itemId]);
   const handleDelete = async () => {
     const result = await Swal.fire({
       title: "確定要刪除物品嗎?",
@@ -107,7 +134,14 @@ export default function ItemPage() {
               category={category}
               handleDelete={handleDelete}
             />
-            <CommentsContainer comments={item.Comments}></CommentsContainer>
+            <CommentsContainer comments={item.Comments} />
+            <PostComment
+              userAvatar={currentMember?.avatar || defaultAvatar}
+              navigate={navigate}
+              isLogin={isLogin}
+              itemId={itemId}
+              refetch={setPost}
+            />
           </>
         )}
         {apiRes === "false" && <h1>找不到用戶</h1>}
@@ -324,5 +358,104 @@ const CommentWrapper = ({ comment }) => {
       </Container>
       <hr></hr>
     </Accordion.Body>
+  );
+};
+
+const PostComment = ({ isLogin, itemId, navigate, userAvatar, refetch }) => {
+  const [comment, setComment] = useState("");
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "bottom",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+  const handleKeyDown = async (e) => {
+    console.log(e.key);
+    if (e.key === "Enter") {
+      await submitComment(e);
+    } else {
+      return;
+    }
+  };
+  const submitComment = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (e.target.value.length === 0) {
+      Toast.fire({
+        icon: "warning",
+        title: "未填寫留言",
+      });
+    }
+    try {
+      const data = await postComment({ itemId, text: comment });
+      if (data.status === "success") {
+        Toast.fire({
+          icon: "success",
+          title: "留言成功",
+        });
+        setComment(""); // 清空留言
+        refetch?.("yes"); //這個狀態更新本身沒有意義，用來在送出留言後更新Item.Comments
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: "留言失敗",
+        });
+      }
+    } catch (error) {
+      Toast.fire({
+        icon: "error",
+        title: `留言失敗: ${error.message}`,
+      });
+    }
+  };
+  const handleClick = async () => {
+    if (isLogin !== "success") {
+      const result = await Swal.fire({
+        title: "尚未登入!",
+        text: "登入後可使用留言功能，要馬上登入嗎?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "登入",
+        cancelButtonText: "取消",
+      });
+      if (result.isConfirmed) navigate("/login");
+      if (result.isDenied) return;
+    } else {
+      return;
+    }
+  };
+  return (
+    <>
+      <Container className="w-0 p-0 mt-3" style={{ width: "80%" }}>
+        <InputGroup>
+          <InputGroup.Text id="basic-addon1">
+            <Image
+              src={userAvatar}
+              alt="logo"
+              style={{
+                marginRight: "6px",
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+              }}
+            />
+          </InputGroup.Text>
+
+          <Form.Control
+            type="text"
+            placeholder="說點什麼吧"
+            value={comment}
+            onChange={(e) => setComment?.(e.target.value)}
+            onKeyDown={(e) => handleKeyDown?.(e)}
+            onClick={() => handleClick?.()}
+          />
+        </InputGroup>
+      </Container>
+    </>
   );
 };
