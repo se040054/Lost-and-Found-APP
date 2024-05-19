@@ -406,7 +406,7 @@ const ItemsWrapper = ({ item }) => {
             width: "100%",
             height: "300px",
             display: "block",
-            objectFit: "cover",
+            objectFit: "contain",
             overflow: "hidden",
           }}
         />

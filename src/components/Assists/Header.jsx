@@ -67,14 +67,10 @@ export default function Header() {
           >
             個人檔案
           </LinkStyled>
-          <LinkStyled
-            to={currentMember ? `/users/${currentMember.id}` : "/login"}
-          >
-            我的刊登
+          <LinkStyled to={currentMember ? `/claims/submitted` : "/login"}>
+            我的認領
           </LinkStyled>
-          <LinkStyled
-            to={currentMember ? `/users/${currentMember.id}` : "/login"}
-          >
+          <LinkStyled to={currentMember ? `/claims/submitted` : "/login"}>
             我的商家
           </LinkStyled>
         </Nav>

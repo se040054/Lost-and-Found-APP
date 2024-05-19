@@ -10,4 +10,5 @@ import EditMerchantPage from "./MerchantPages/EditMerchantPage";
 import CreateItemPage from "./ItemPages/CreateItemPage";
 import ItemPage from "./ItemPages/ItemPage";
 import EditItemPage from "./ItemPages/EditItemPage";
-export { HomePage, LoginPage, RegisterPage, ProfilePage, EditProfilePage, EditPasswordPage, CreateMerchantPage, MerchantInfoPage, EditMerchantPage, CreateItemPage, ItemPage, EditItemPage }
+import SubmittedClaimPage from "./ClaimPage.jsx/SubmittedClaimPage";
+export { HomePage, LoginPage, RegisterPage, ProfilePage, EditProfilePage, EditPasswordPage, CreateMerchantPage, MerchantInfoPage, EditMerchantPage, CreateItemPage, ItemPage, EditItemPage, SubmittedClaimPage }
