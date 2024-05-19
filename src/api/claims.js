@@ -25,12 +25,12 @@ export const getClaim = async (itemId) => {
   }
 }
 
-// export const postClaim = async (itemId) => {
-//   try {
-//     const { data } = await tokenInstance.post(itemId)
-//     return data
-//   } catch (error) {
-//     console.log(error)
-//     return error
-//   }
-// }
+export const postClaim = async (itemId) => {
+  try {
+    const { data } = await tokenInstance.post(`${apiBaseURL}/${itemId}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error
+  }
+}

@@ -27,7 +27,7 @@ import { getCategory } from "../../api/categories";
 import Swal from "sweetalert2";
 import { StaticFavoriteButton } from "../../components/Assists/FavoriteButton";
 import { deleteComment, postComment } from "../../api/comment";
-import { getClaim } from "../../api/claims";
+import { getClaim, postClaim } from "../../api/claims";
 
 export default function ItemPage() {
   const itemId = useParams().id;
@@ -135,11 +135,6 @@ export default function ItemPage() {
     console.log(result);
   };
 
-  const handleClaim = async (itemId) => {
-    try {
-      // const claimData = await null;
-    } catch (error) {}
-  };
   return (
     <>
       <Header />
@@ -152,7 +147,9 @@ export default function ItemPage() {
               category={category}
               handleDelete={handleDelete}
               claim={claim}
-              handleClaim={handleClaim}
+              handleClaim={(newClaim) => setClaim(newClaim)}
+              isLogin={isLogin}
+              navigate={navigate}
             />
             <CommentsContainer comments={item.Comments} refetch={setPost} />
             <PostComment
@@ -200,6 +197,8 @@ const InformationContainer = ({
   handleDelete,
   claim,
   handleClaim,
+  isLogin,
+  navigate,
 }) => {
   function stringToDate(rawData) {
     const splitArray = rawData.split("-");
@@ -326,18 +325,87 @@ const InformationContainer = ({
             itemClaimed={item.isClaimed}
             claim={claim}
             handleClaim={handleClaim}
+            itemId={item.id}
+            isLogin={isLogin}
+            navigate={navigate}
           />
         </Container>
       )}
     </ItemContainerStyled>
   );
 };
-const ClaimButton = ({ itemClaimed, claim, handleClaim }) => {
+const ClaimButton = ({
+  itemClaimed,
+  claim,
+  handleClaim,
+  itemId,
+  isLogin,
+  navigate,
+}) => {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "bottom",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
+  const handleClick = async (itemId) => {
+    if (isLogin !== "success") {
+      const result = await Swal.fire({
+        title: "尚未登入!",
+        text: "登入後可使用留言功能，要馬上登入嗎?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "登入",
+        cancelButtonText: "取消",
+      });
+      if (result.isConfirmed) navigate("/login");
+      if (result.isDenied) return;
+    } else {
+      const result = await Swal.fire({
+        title: "確定認領物品嗎?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "認領",
+        cancelButtonText: "取消",
+      });
+      if (result.isConfirmed) claimItem(itemId);
+      if (result.isDenied) return;
+    }
+    async function claimItem(itemId) {
+      try {
+        const claim = await postClaim(itemId);
+        if (claim.status === "success") {
+          handleClaim?.(claim.apiData);
+          Toast.fire({
+            icon: "success",
+            title: "已申請認領",
+          });
+        } else {
+          Toast.fire({
+            icon: "error",
+            title: `申請認領失敗: ${claim.message}`,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        Toast.fire({
+          icon: "error",
+          title: `申請認領失敗: ${error.message}`,
+        });
+      }
+    }
+  };
   let btn;
   console.log(itemClaimed, claim);
   if (!itemClaimed && !claim) {
     btn = (
-      <Button className="btn btn-success" onClick={(e) => handleClaim?.()}>
+      <Button className="btn btn-success" onClick={() => handleClick?.(itemId)}>
         我要認領
       </Button>
     );
@@ -355,7 +423,7 @@ const ClaimButton = ({ itemClaimed, claim, handleClaim }) => {
     );
   } else if (!itemClaimed && claim.isApproved === false) {
     btn = (
-      <Button className="btn btn-warning" onClick={(e) => handleClaim?.()}>
+      <Button className="btn btn-warning" onClick={() => handleClaim?.(itemId)}>
         再次申請認領
       </Button>
     );
@@ -451,12 +519,14 @@ const CommentWrapper = ({ comment, refetch }) => {
         Toast.fire({
           icon: "error",
           title: "刪除失敗",
+          text: data.message,
         });
       }
     } catch (error) {
       Toast.fire({
         icon: "error",
-        title: `刪除失敗: ${error.message}`,
+        title: `刪除失敗`,
+        text: error.message,
       });
     }
   };
@@ -541,12 +611,14 @@ const PostComment = ({ isLogin, itemId, navigate, userAvatar, refetch }) => {
         Toast.fire({
           icon: "error",
           title: "留言失敗",
+          text: data.message,
         });
       }
     } catch (error) {
       Toast.fire({
         icon: "error",
-        title: `留言失敗: ${error.message}`,
+        title: "留言失敗",
+        text: error.message,
       });
     }
   };
