@@ -25,32 +25,45 @@ import {
 import { MdOutlineInsertComment } from "react-icons/md";
 import { getCategory } from "../../api/categories";
 import Swal from "sweetalert2";
-import FavoriteButton, {
-  StaticFavoriteButton,
-} from "../../components/Assists/FavoriteButton";
+import { StaticFavoriteButton } from "../../components/Assists/FavoriteButton";
 import { deleteComment, postComment } from "../../api/comment";
+import { getClaim } from "../../api/claims";
 
 export default function ItemPage() {
-  const [item, setItem] = useState(null);
-  const [apiRes, setApiRes] = useState("loading");
-  const [category, setCategory] = useState([]);
+  const itemId = useParams().id;
   const { isLogin, currentMember } = useAuth();
+  const [item, setItem] = useState(null);
+  const [category, setCategory] = useState([]);
+  const [claim, setClaim] = useState([]);
+  const [apiRes, setApiRes] = useState("loading");
   const [post, setPost] = useState("no"); // 這個狀態本身沒有意義，用來在送出留言後抓取Item.Comments
   const navigate = useNavigate();
-  const itemId = useParams().id;
   useEffect(() => {
-    // 進入頁面時抓取物品跟分類資料的效果
+    // 抓取分類資料的效果
+    const fetchCategory = async () => {
+      try {
+        const categoryData = await getCategory(item.categoryId);
+        setCategory(categoryData.apiData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCategory();
+  }, [item]);
+  useEffect(() => {
+    // 進入頁面時抓取物品的效果
     const fetchData = async () => {
       try {
-        const data = await getItem(itemId);
-        if (!data.apiData) {
+        const itemData = await getItem(itemId);
+        const claimData = await getClaim(itemId);
+        if (!itemData.apiData) {
+          // 目前只有data itemData比較必要
           setItem(null);
           setApiRes("false");
           return;
         }
-        const category = await getCategory(data.apiData.categoryId);
-        setItem(data.apiData);
-        setCategory(category.apiData);
+        setItem(itemData.apiData);
+        setClaim(claimData.apiData);
         setApiRes("success");
       } catch (error) {
         console.log(error);
@@ -119,8 +132,13 @@ export default function ItemPage() {
       }
     }
     if (result.isDenied) return;
-
     console.log(result);
+  };
+
+  const handleClaim = async (itemId) => {
+    try {
+      // const claimData = await null;
+    } catch (error) {}
   };
   return (
     <>
@@ -133,6 +151,8 @@ export default function ItemPage() {
               currentMemberId={currentMember?.id}
               category={category}
               handleDelete={handleDelete}
+              claim={claim}
+              handleClaim={handleClaim}
             />
             <CommentsContainer comments={item.Comments} refetch={setPost} />
             <PostComment
@@ -178,6 +198,8 @@ const InformationContainer = ({
   currentMemberId,
   category,
   handleDelete,
+  claim,
+  handleClaim,
 }) => {
   function stringToDate(rawData) {
     const splitArray = rawData.split("-");
@@ -259,7 +281,7 @@ const InformationContainer = ({
             <InfoRow>
               <Col md={5}>認領狀態 :</Col>
               <Col md={7}>
-                {item.isClaim ? (
+                {item.isClaimed ? (
                   <p className="text-success m-0 p-0 ">已認領</p>
                 ) : (
                   <p className="text-primary m-0 p-0 ">未認領</p>
@@ -298,8 +320,61 @@ const InformationContainer = ({
           </Button>
         </Container>
       )}
+      {item.userId !== currentMemberId && (
+        <Container className="d-flex mt-5 justify-content-end">
+          <ClaimButton
+            itemClaimed={item.isClaimed}
+            claim={claim}
+            handleClaim={handleClaim}
+          />
+        </Container>
+      )}
     </ItemContainerStyled>
   );
+};
+const ClaimButton = ({ itemClaimed, claim, handleClaim }) => {
+  let btn;
+  console.log(itemClaimed, claim);
+  if (!itemClaimed && !claim) {
+    btn = (
+      <Button className="btn btn-success" onClick={(e) => handleClaim?.()}>
+        我要認領
+      </Button>
+    );
+  } else if (itemClaimed && !claim) {
+    btn = (
+      <Button className="btn btn-secondary" disabled>
+        物品已被認領
+      </Button>
+    );
+  } else if (itemClaimed && claim.isApproved === true) {
+    btn = (
+      <Button className="btn btn-secondary" disabled>
+        你已經認領此物品
+      </Button>
+    );
+  } else if (!itemClaimed && claim.isApproved === false) {
+    btn = (
+      <Button className="btn btn-warning" onClick={(e) => handleClaim?.()}>
+        再次申請認領
+      </Button>
+    );
+  } else if (!itemClaimed && claim.isApproved === null) {
+    btn = (
+      <Button className="btn btn-secondary" disabled>
+        認領申請等待批准中
+      </Button>
+    );
+  } else if (itemClaimed && claim.isApproved === false) {
+    btn = (
+      <Button className="btn btn-secondary" disabled>
+        物品被領走啦
+      </Button>
+    );
+  } else {
+    btn = "請稍後再試";
+  }
+  return btn;
 };
 
 const CommentsContainer = ({ comments, refetch }) => {
