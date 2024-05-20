@@ -62,9 +62,9 @@ export default function ReceivedClaimsPage() {
 
       <MainContainer>
         <TitleContainer>
-          <h2>我收到的認領</h2>
+          <h2 className="m-0 p-0 fw-bold">我收到的認領</h2>
           <Link className="position-absolute end-0" to="/claims/submitted">
-            <Button>查看我送出的認領申請</Button>{" "}
+            <Button className="btn-success">查看我送出的認領申請</Button>{" "}
           </Link>
         </TitleContainer>
         <hr className="w-100" />

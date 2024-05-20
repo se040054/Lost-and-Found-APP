@@ -50,9 +50,9 @@ export default function SubmittedClaimPage() {
 
       <MainContainer>
         <TitleContainer>
-          <h2>我送出的認領</h2>
+          <h2 className="m-0 p-0 fw-bold">我送出的認領</h2>
           <Link className="position-absolute end-0" to="/claims/received">
-            <Button>查看我收到的認領申請</Button>{" "}
+            <Button className="btn-success">查看我收到的認領申請</Button>{" "}
           </Link>
         </TitleContainer>
         <hr className="w-100" />
@@ -70,12 +70,12 @@ export default function SubmittedClaimPage() {
 
 const ClaimsContainer = ({ claims }) => {
   return (
-    <CardGroup>
+    <CardGroup className="w-100 m-0 p-0">
       {claims?.length > 0 && (
-        <Row xs={1} xl={1}>
+        <Row xs={1} xl={1} className="w-100 m-0 p-0">
           {claims.map((claim) => {
             return (
-              <Col key={claim.id}>
+              <Col className="w-100 m-0 p-0" key={claim.id}>
                 <ClaimWrapper claim={claim}></ClaimWrapper>
               </Col>
             );
