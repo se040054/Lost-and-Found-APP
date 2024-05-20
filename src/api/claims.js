@@ -44,3 +44,13 @@ export const getSubmittedClaims = async () => {
     return error
   }
 }
+
+export const getReceivedClaims = async () => {
+  try {
+    const { data } = await tokenInstance.get(`${apiBaseURL}/received`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error
+  }
+}

@@ -4,14 +4,15 @@ import {
   CardGroup,
   Col,
   Container,
+  Image,
   Row,
   Spinner,
 } from "react-bootstrap";
 import Header from "../../components/Assists/Header";
 import { useEffect, useState } from "react";
-import { getSubmittedClaims } from "../../api/claims";
+import { getReceivedClaims, getSubmittedClaims } from "../../api/claims";
 import styled from "styled-components";
-import { defaultItemPhoto } from "../../assets";
+import { defaultAvatar, defaultItemPhoto } from "../../assets";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -19,24 +20,35 @@ import {
   TitleContainer,
 } from "../../components/common/claimStyled";
 
-export default function SubmittedClaimPage() {
+export default function ReceivedClaimsPage() {
   const { isLogin, currentMember } = useAuth();
-  const [claims, setClaims] = useState(null);
+  const [pendingClaims, setPendingClaims] = useState([]);
+  const [resolvedClaims, setResolvedClaims] = useState([]);
   const [apiRes, setApiRes] = useState("loading");
   const navigate = useNavigate();
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const data = await getSubmittedClaims();
+        const data = await getReceivedClaims();
         if (data.status === "success") {
-          setClaims(data.apiData);
+          const tempPendingClaims = [];
+          const tempResolvedClaims = [];
+          data.apiData.forEach((claim) => {
+            console.log(claim.isApproved === null);
+            if (claim.isApproved === null) tempPendingClaims.push(claim);
+            else tempResolvedClaims.push(claim);
+          });
+          setPendingClaims(tempPendingClaims);
+          setResolvedClaims(tempResolvedClaims);
           setApiRes("success");
         } else {
-          setClaims(null);
+          setPendingClaims(null);
+          setResolvedClaims(null);
           setApiRes("false");
         }
       } catch (error) {
-        setClaims(null);
+        setPendingClaims(null);
+        setResolvedClaims(null);
         setApiRes("false");
         console.log(error);
       }
@@ -50,14 +62,32 @@ export default function SubmittedClaimPage() {
 
       <MainContainer>
         <TitleContainer>
-          <h2>我送出的認領</h2>
-          <Link className="position-absolute end-0" to="/claims/received">
-            <Button>查看我收到的認領申請</Button>{" "}
+          <h2>我收到的認領</h2>
+          <Link className="position-absolute end-0" to="/claims/submitted">
+            <Button>查看我送出的認領申請</Button>{" "}
           </Link>
         </TitleContainer>
         <hr className="w-100" />
         {apiRes === "success" && (
-          <ClaimsContainer claims={claims}></ClaimsContainer>
+          <>
+            <>
+              <h5> 待處理的申請 </h5>
+              {pendingClaims.length > 0 ? (
+                <ClaimsContainer claims={pendingClaims}></ClaimsContainer>
+              ) : (
+                <p>目前沒有申請~</p>
+              )}
+            </>
+            <hr className="w-100" />
+            <>
+              <h5> 已處理完成的申請 </h5>
+              {resolvedClaims.length > 0 ? (
+                <ClaimsContainer claims={resolvedClaims}></ClaimsContainer>
+              ) : (
+                <p>目前沒有申請~</p>
+              )}
+            </>
+          </>
         )}
         {apiRes === "false" && <h1>請稍後再試</h1>}
         {apiRes === "loading " && (
@@ -71,22 +101,15 @@ export default function SubmittedClaimPage() {
 const ClaimsContainer = ({ claims }) => {
   return (
     <CardGroup>
-      {claims?.length > 0 && (
-        <Row xs={1} xl={1}>
-          {claims.map((claim) => {
-            return (
-              <Col key={claim.id}>
-                <ClaimWrapper claim={claim}></ClaimWrapper>
-              </Col>
-            );
-          })}
-        </Row>
-      )}
-      {claims?.length === 0 && (
-        <>
-          <h4>目前尚未申請過認領</h4>
-        </>
-      )}
+      <Row xs={1} xl={1}>
+        {claims.map((claim) => {
+          return (
+            <Col key={claim.id}>
+              <ClaimWrapper claim={claim}></ClaimWrapper>
+            </Col>
+          );
+        })}
+      </Row>
     </CardGroup>
   );
 };
@@ -109,6 +132,25 @@ const ClaimWrapper = ({ claim }) => {
   }
   return (
     <Card className="mb-3">
+      <Row className="d-flex align-items-center m-0 ps-3 py-2">
+        <Card.Title className="p-0 m-0">
+          <a href={`/users/${claim.User.id}`}>
+            <Image
+              src={claim.User.avatar || defaultAvatar}
+              alt="avatar"
+              style={{
+                marginRight: "6px",
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+              }}
+            />
+
+            <small>{claim.User.name}</small>
+          </a>
+        </Card.Title>
+      </Row>
+      <hr className="w-100 m-0 p-0"></hr>
       <Row>
         <Col md={3}>
           <Link to={`/items/${claim.itemId}`}>
@@ -135,7 +177,7 @@ const ClaimWrapper = ({ claim }) => {
 
         <Col md={3} className="d-flex align-items-center">
           <Card.Body>
-            <Card.Title>認領時間：</Card.Title>
+            <Card.Title>申請時間：</Card.Title>
             <Card.Text>
               <small className="text-muted">
                 {formatDate?.(claim?.createdAt)}

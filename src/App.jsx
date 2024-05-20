@@ -14,6 +14,7 @@ import {
   ItemPage,
   EditItemPage,
   SubmittedClaimPage,
+  ReceivedClaimPage,
 } from "./pages";
 import React from "react";
 import { GlobalStyles } from "./components/common/global";
@@ -56,6 +57,10 @@ function App() {
                 <Route
                   path="claims/submitted"
                   element={<SubmittedClaimPage />}
+                />
+                <Route
+                  path="claims/received"
+                  element={<ReceivedClaimPage />}
                 />
               </Routes>
             </FavoriteContextProvider>
