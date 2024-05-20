@@ -156,7 +156,6 @@ export default function HomePage() {
 
         {/* 物品 */}
         <ItemsContainer items={items} apiRes={apiRes}></ItemsContainer>
-
         <PaginationContainer
           page={page}
           onPageChange={setPage}

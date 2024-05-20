@@ -1,16 +1,7 @@
-import {
-  Button,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Row,
-  Spinner,
-} from "react-bootstrap";
+import { Button, Card, CardGroup, Col, Row, Spinner } from "react-bootstrap";
 import Header from "../../components/Assists/Header";
 import { useEffect, useState } from "react";
 import { getSubmittedClaims } from "../../api/claims";
-import styled from "styled-components";
 import { defaultItemPhoto } from "../../assets";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -20,7 +11,7 @@ import {
 } from "../../components/common/claimStyled";
 
 export default function SubmittedClaimPage() {
-  const { isLogin, currentMember } = useAuth();
+  const { isLogin } = useAuth();
   const [claims, setClaims] = useState(null);
   const [apiRes, setApiRes] = useState("loading");
   const navigate = useNavigate();

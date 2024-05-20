@@ -54,3 +54,13 @@ export const getReceivedClaims = async () => {
     return error
   }
 }
+
+export const putClaim = async ({ id, action }) => {
+  try {
+    const { data } = await tokenInstance.put(`${apiBaseURL}/${id}`, { action: action })
+    return data
+  } catch (error) {
+    console.log(error)
+    return error
+  }
+}
