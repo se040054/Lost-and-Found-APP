@@ -25,6 +25,12 @@ import {
 } from "../../components/common/profileStyled";
 import Swal from "sweetalert2";
 import { AbsoluteFavoriteButton } from "../../components/Assists/FavoriteButton";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
 
 export default function MerchantInfoPage() {
   const { currentMember } = useAuth();
@@ -96,6 +102,11 @@ export default function MerchantInfoPage() {
   return (
     <>
       <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <MainContainerStyled>
         {apiRes === "success" && (
           <>

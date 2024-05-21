@@ -19,7 +19,6 @@ import {
   Image,
   Container,
 } from "react-bootstrap";
-
 import { Link, useNavigate } from "react-router-dom";
 import { getCategories } from "../api/categories";
 import { PaginationControl } from "react-bootstrap-pagination-control";
@@ -32,6 +31,11 @@ import { FaRegCommentDots } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
 import { AbsoluteFavoriteButton } from "../components/Assists/FavoriteButton";
 import Swal from "sweetalert2";
+import {
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../components/Assists/NavigationTool";
 
 const ITEM_AMOUNT_PER_PAGE = 12;
 
@@ -121,6 +125,11 @@ export default function HomePage() {
     <>
       {/* 導覽列 */}
       <Header />
+      {/* 小工具 */}
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+      </NavigationToolContainer>
       {/* 主要部分 */}
       <MainContainerStyled>
         {/* 搜尋 */}

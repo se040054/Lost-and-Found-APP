@@ -15,6 +15,12 @@ import {
   FormContainerStyled,
   StyledAuthButton,
 } from "../../components/Auth/FormContainerStyled";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
 
 export default function CreateMerchantPage() {
   const { isLogin } = useAuth();
@@ -124,7 +130,12 @@ export default function CreateMerchantPage() {
   };
   return (
     <>
-      <Header></Header>
+      <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <FormContainerStyled>
         <FormContainer>
           <AuthTitle>申請商家</AuthTitle>

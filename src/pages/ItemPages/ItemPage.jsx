@@ -21,13 +21,18 @@ import {
   defaultItemPhoto,
   defaultMerchantLogo,
 } from "../../assets";
-
 import { MdOutlineInsertComment } from "react-icons/md";
 import { getCategory } from "../../api/categories";
 import Swal from "sweetalert2";
 import { StaticFavoriteButton } from "../../components/Assists/FavoriteButton";
 import { deleteComment, postComment } from "../../api/comment";
 import { getClaim, postClaim } from "../../api/claims";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
 
 export default function ItemPage() {
   const itemId = useParams().id;
@@ -138,6 +143,11 @@ export default function ItemPage() {
   return (
     <>
       <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <MainContainerStyled>
         {apiRes === "success" && (
           <>

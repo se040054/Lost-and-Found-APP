@@ -9,6 +9,12 @@ import {
   MainContainer,
   TitleContainer,
 } from "../../components/common/claimStyled";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
 
 export default function SubmittedClaimPage() {
   const { isLogin } = useAuth();
@@ -38,7 +44,11 @@ export default function SubmittedClaimPage() {
   return (
     <>
       <Header />
-
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <MainContainer>
         <TitleContainer>
           <h2 className="m-0 p-0 fw-bold">我送出的認領</h2>

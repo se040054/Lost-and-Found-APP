@@ -13,6 +13,13 @@ import {
   FormContainerStyled,
   StyledAuthButton,
 } from "../../components/Auth/FormContainerStyled";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
+
 export default function EditPasswordPage() {
   const { currentMember, isLogin } = useAuth();
   const [getMember, setGetMember] = useState("loading"); // 避免Effect先檢測
@@ -145,7 +152,12 @@ export default function EditPasswordPage() {
   };
   return (
     <>
-      <Header></Header>
+      <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <FormContainerStyled>
         {/* 注意這邊很容易因為還沒拿到currentMember導致defaultValue失效 */}
         <FormContainer>

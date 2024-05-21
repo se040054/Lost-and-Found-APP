@@ -62,6 +62,7 @@ export default function Header() {
       {/* 中間 連結 */}{" "}
       <Container className="justify-content-center">
         <Nav>
+          <LinkStyled to="/home">回到首頁</LinkStyled>
           <LinkStyled
             to={currentMember ? `/users/${currentMember.id}` : "/login"}
           >
@@ -69,9 +70,6 @@ export default function Header() {
           </LinkStyled>
           <LinkStyled to={currentMember ? `/claims/submitted` : "/login"}>
             我的認領
-          </LinkStyled>
-          <LinkStyled to={currentMember ? `/claims/submitted` : "/login"}>
-            我的商家
           </LinkStyled>
         </Nav>
       </Container>

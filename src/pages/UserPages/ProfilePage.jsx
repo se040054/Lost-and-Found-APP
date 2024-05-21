@@ -31,6 +31,12 @@ import { FaPhoneAlt } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
 import { AbsoluteFavoriteButton } from "../../components/Assists/FavoriteButton";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
 export default function ProfilePage() {
   const { currentMember } = useAuth();
   const userId = useParams().id;
@@ -64,6 +70,11 @@ export default function ProfilePage() {
   return (
     <>
       <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <MainContainerStyled>
         {apiRes === "success" && (
           <>

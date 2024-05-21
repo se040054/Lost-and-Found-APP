@@ -18,6 +18,13 @@ import { editItem, getItem } from "../../api/items";
 import DateInput from "../../components/Auth/DateInput";
 import SelectInput from "../../components/Auth/SelectInput";
 import { getCategories } from "../../api/categories";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
+
 export default function EditItemPage() {
   const { currentMember, isLogin } = useAuth(); // 注意currentMember是異步，可能導致使用者被檢測未登入所以下面掛載loading
   const [apiRes, setApiRes] = useState("loading"); // 避免Effect先檢測
@@ -186,7 +193,12 @@ export default function EditItemPage() {
   };
   return (
     <>
-      <Header></Header>
+      <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <FormContainerStyled>
         {apiRes === "success" && (
           <FormContainer>

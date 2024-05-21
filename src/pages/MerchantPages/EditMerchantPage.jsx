@@ -15,6 +15,13 @@ import {
   FormContainerStyled,
   StyledAuthButton,
 } from "../../components/Auth/FormContainerStyled";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
+
 export default function EditMerchantPage() {
   const { currentMember, isLogin } = useAuth(); // 注意currentMember是異步，可能導致使用者被檢測未登入所以下面掛載loading
   const [apiRes, setApiRes] = useState("loading"); // 避免Effect先檢測
@@ -177,7 +184,12 @@ export default function EditMerchantPage() {
   };
   return (
     <>
-      <Header></Header>
+      <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <FormContainerStyled>
         {/* 注意這邊很容易因為還沒拿到currentMember導致defaultValue失效 */}
         {apiRes === "success" && (

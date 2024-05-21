@@ -19,6 +19,12 @@ import {
   TitleContainer,
 } from "../../components/common/claimStyled";
 import Swal from "sweetalert2";
+import {
+  BackHomeButton,
+  BackToTopButton,
+  GoBackButton,
+  NavigationToolContainer,
+} from "../../components/Assists/NavigationTool";
 
 export default function ReceivedClaimsPage() {
   const { isLogin } = useAuth();
@@ -55,6 +61,11 @@ export default function ReceivedClaimsPage() {
   return (
     <>
       <Header />
+      <NavigationToolContainer>
+        <BackToTopButton />
+        <GoBackButton />
+        <BackHomeButton />
+      </NavigationToolContainer>
       <MainContainer>
         <TitleContainer>
           <h2 className="m-0 p-0 fw-bold">我收到的認領</h2>
