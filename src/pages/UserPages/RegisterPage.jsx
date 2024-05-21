@@ -11,7 +11,9 @@ import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ToggleThemeButton from "../../components/Assists/ToggleThemeButton";
+import { Image } from "react-bootstrap";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -127,6 +129,7 @@ export default function RegisterPage() {
   return (
     <AuthPage>
       <AuthContainer>
+        <ToggleThemeButton />
         <FormContainer>
           <AuthTitle>建立您的免費帳戶</AuthTitle>
           <FormInput
@@ -190,12 +193,17 @@ export default function RegisterPage() {
             註冊
           </AuthButton>
           <AuthLink>
-            已經有帳號了? <a href="/login">登入</a>
+            已經有帳號了？　
+            <a href="/login" style={{ textDecoration: "underline" }}>
+              登入
+            </a>
           </AuthLink>
         </FormContainer>
+        <Link to="/home">
+          <AuthButton>晚點再說，進入網站</AuthButton>
+        </Link>
       </AuthContainer>
-
-      <AuthBanner>大圖片</AuthBanner>
+      <AuthBanner />
     </AuthPage>
   );
 }

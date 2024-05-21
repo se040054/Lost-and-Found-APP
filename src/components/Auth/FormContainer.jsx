@@ -16,14 +16,7 @@ export default function FormContainer({
   };
 
   return (
-    <Form
-      noValidate
-      validated={validated}
-      onSubmit={handleSubmit}
-      style={{
-        marginTop: "100px",
-      }}
-    >
+    <Form noValidate validated={validated} onSubmit={handleSubmit}>
       {children}
     </Form>
   );

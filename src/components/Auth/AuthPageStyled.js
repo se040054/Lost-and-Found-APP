@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-
-
 export const AuthPage = styled.div`
   width: 100%;
   height: 100%;
@@ -9,9 +7,8 @@ export const AuthPage = styled.div`
   flex-direction: row;
 `;
 
-
 export const AuthContainer = styled.div`
-  
+  padding-top:10px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
@@ -22,8 +19,17 @@ export const AuthContainer = styled.div`
 `;
 
 export const AuthBanner = styled.div`
+  position:fixed;
+  right:0;
+  bottom:0;
+  top:0;
+  background-image:url('https://iili.io/Ji5XFJ2.jpg');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
   display: flex;
-  width: 50%;
+  width:50%;
+  height:100%;
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: center;
@@ -47,7 +53,7 @@ export const AuthButton = styled.button`
 `;
 
 export const AuthTitle = styled.div`
-  margin-bottom: 30px;
+  margin: 30px auto 10px auto;
   width: 100%;
   text-align: center;
   font-size: 24px;
@@ -58,5 +64,5 @@ export const AuthLink = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  text-align: center;
+  text-align: center; 
 `;

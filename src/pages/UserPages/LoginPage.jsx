@@ -11,11 +11,12 @@ import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ToggleThemeButton from "../../components/Assists/ToggleThemeButton";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const defaultForm = { 
+  const defaultForm = {
     account: "",
     password: "",
   };
@@ -71,6 +72,7 @@ export default function LoginPage() {
   return (
     <AuthPage>
       <AuthContainer>
+        <ToggleThemeButton />
         <FormContainer>
           <AuthTitle>登入</AuthTitle>
           <FormInput
@@ -101,12 +103,17 @@ export default function LoginPage() {
             登入
           </AuthButton>
           <AuthLink>
-            還沒有帳號? <a href="/register">註冊</a>
+            還沒有帳號？　{"  "}
+            <a href="/register" style={{ textDecoration: "underline" }}>
+              註冊
+            </a>
           </AuthLink>
         </FormContainer>
+        <Link to="/home">
+          <AuthButton>晚點再說，進入網站</AuthButton>
+        </Link>
       </AuthContainer>
-
-      <AuthBanner>大圖片</AuthBanner>
+      <AuthBanner />
     </AuthPage>
   );
 }
