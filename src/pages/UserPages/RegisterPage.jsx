@@ -5,6 +5,9 @@ import {
   AuthBanner,
   AuthButton,
   AuthLink,
+  AuthMainContainer,
+  AuthBannerConatiner,
+  AuthBannerContainer,
 } from "../../components/Auth/AuthPageStyled";
 import { useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -13,7 +16,7 @@ import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
 import { Link, useNavigate } from "react-router-dom";
 import ToggleThemeButton from "../../components/Assists/ToggleThemeButton";
-import { Image } from "react-bootstrap";
+import GoogleOAuthButton from "../../components/OAuth/GoogleOAuth";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -128,82 +131,87 @@ export default function RegisterPage() {
   };
   return (
     <AuthPage>
-      <AuthContainer>
-        <ToggleThemeButton />
-        <FormContainer>
-          <AuthTitle>建立您的免費帳戶</AuthTitle>
-          <FormInput
-            id="account"
-            label="帳號"
-            type="text"
-            placeholder="請輸入帳號"
-            onChange={() => handleInputOnChange("account")}
-            useRef={inputRef.account}
-            invalidPrompt={"至少包含 3 個以上字元"}
-            minlength={3}
-            maxlength={16}
-            isRequired={true}
-          />
-          <FormInput
-            id="password"
-            label="密碼"
-            type="password"
-            placeholder="請輸入密碼"
-            onChange={() => handleInputOnChange("password")}
-            useRef={inputRef.password}
-            invalidPrompt={
-              !passwordMatch ? "密碼不一致" : "至少包含3個以上字元"
-            }
-            minlength={3}
-            maxlength={16}
-            isRequired={true}
-          />
-          <FormInput
-            id="confirmPassword"
-            label="確認密碼"
-            type="password"
-            placeholder="請輸入確認密碼"
-            onChange={() => handleInputOnChange("confirmPassword")}
-            useRef={inputRef.confirmPassword}
-            invalidPrompt={
-              !passwordMatch ? "密碼不一致" : "至少包含3個以上字元"
-            }
-            minlength={3}
-            maxlength={16}
-            isRequired={true}
-          />
-          <FormInput
-            id="name"
-            label="用戶名稱"
-            type="text"
-            placeholder="請輸入用戶名稱"
-            onChange={() => handleInputOnChange("name")}
-            useRef={inputRef.name}
-            invalidPrompt={"至少包含 2 個以上字元"}
-            minlength={2}
-            maxlength={16}
-            isRequired={true}
-          />
-          <AuthButton
-            type="submit"
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
-          >
-            註冊
-          </AuthButton>
+      <AuthMainContainer>
+        <AuthContainer>
+          <ToggleThemeButton />
+          <FormContainer>
+            <AuthTitle>建立您的免費帳戶</AuthTitle>
+            <FormInput
+              id="account"
+              label="帳號"
+              type="text"
+              placeholder="請輸入帳號"
+              onChange={() => handleInputOnChange("account")}
+              useRef={inputRef.account}
+              invalidPrompt={"至少包含 3 個以上字元"}
+              minlength={3}
+              maxlength={16}
+              isRequired={true}
+            />
+            <FormInput
+              id="password"
+              label="密碼"
+              type="password"
+              placeholder="請輸入密碼"
+              onChange={() => handleInputOnChange("password")}
+              useRef={inputRef.password}
+              invalidPrompt={
+                !passwordMatch ? "密碼不一致" : "至少包含3個以上字元"
+              }
+              minlength={3}
+              maxlength={16}
+              isRequired={true}
+            />
+            <FormInput
+              id="confirmPassword"
+              label="確認密碼"
+              type="password"
+              placeholder="請輸入確認密碼"
+              onChange={() => handleInputOnChange("confirmPassword")}
+              useRef={inputRef.confirmPassword}
+              invalidPrompt={
+                !passwordMatch ? "密碼不一致" : "至少包含3個以上字元"
+              }
+              minlength={3}
+              maxlength={16}
+              isRequired={true}
+            />
+            <FormInput
+              id="name"
+              label="用戶名稱"
+              type="text"
+              placeholder="請輸入用戶名稱"
+              onChange={() => handleInputOnChange("name")}
+              useRef={inputRef.name}
+              invalidPrompt={"至少包含 2 個以上字元"}
+              minlength={2}
+              maxlength={16}
+              isRequired={true}
+            />
+            <AuthButton
+              type="submit"
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+            >
+              註冊
+            </AuthButton>
+          </FormContainer>
+          <GoogleOAuthButton />
+          <Link to="/home">
+            <AuthButton>晚點再說，進入網站</AuthButton>
+          </Link>
           <AuthLink>
-            已經有帳號了？　
+            已經有帳號了？　{"  "}
             <a href="/login" style={{ textDecoration: "underline" }}>
               登入
             </a>
           </AuthLink>
-        </FormContainer>
-        <Link to="/home">
-          <AuthButton>晚點再說，進入網站</AuthButton>
-        </Link>
-      </AuthContainer>
-      <AuthBanner />
+        </AuthContainer>
+      </AuthMainContainer>
+      <AuthBannerContainer>
+        <AuthBanner />
+      </AuthBannerContainer>
     </AuthPage>
   );
 }

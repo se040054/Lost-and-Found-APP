@@ -78,6 +78,7 @@ export default function HomePage() {
   const [apiRes, setApiRes] = useState("loading");
   const { isLogin } = useAuth();
   const navigate = useNavigate();
+
   // 目前構思，由於items物品不直接更動但會受其他組件影響，Effect放置於父元件
   // const theme = useTheme();
   // console.log("主題" + JSON.stringify(theme));
@@ -325,14 +326,14 @@ const CreateContainer = ({ isLogin, navigate }) => {
 
 const ItemsContainer = ({ items, apiRes }) => {
   return (
-    <CardGroup className="mt-5">
+    <CardGroup className="mt-5 w-100">
       {/* CardGroup會統一掌管卡片大小 */}
       {apiRes === "empty" && <h3>沒有符合的項目</h3>}
       {apiRes === "loading " && (
         <Spinner animation="border" variant="success" />
       )}
       {apiRes === "success" && (
-        <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-3">
+        <Row xs={1} sm={2} md={3} lg={4} xl={4} className="g-3 w-100">
           {/* 這些屬性是一rows 在RWD響應下有幾個元素 */}
           {items.map((item) => {
             return (

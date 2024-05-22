@@ -1,10 +1,13 @@
 import {
   AuthPage,
+  AuthMainContainer,
   AuthContainer,
   AuthTitle,
   AuthBanner,
   AuthButton,
   AuthLink,
+  AuthBannerConatiner,
+  AuthBannerContainer,
 } from "../../components/Auth/AuthPageStyled";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -13,6 +16,7 @@ import FormContainer from "../../components/Auth/FormContainer";
 import FormInput from "../../components/Auth/FormInput";
 import { Link, useNavigate } from "react-router-dom";
 import ToggleThemeButton from "../../components/Assists/ToggleThemeButton";
+import GoogleOAuthButton from "../../components/OAuth/GoogleOAuth";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -71,49 +75,54 @@ export default function LoginPage() {
   };
   return (
     <AuthPage>
-      <AuthContainer>
-        <ToggleThemeButton />
-        <FormContainer>
-          <AuthTitle>登入</AuthTitle>
-          <FormInput
-            id="account"
-            label="帳號"
-            type="text"
-            placeholder="請輸入帳號"
-            onChange={(e) => handleInputOnChange("account", e.target.value)}
-            needFeedback={false}
-            isRequired={true}
-          />
-          <FormInput
-            id="password"
-            label="密碼"
-            type="password"
-            placeholder="請輸入密碼"
-            onChange={(e) => handleInputOnChange("password", e.target.value)}
-            needFeedback={false}
-            isRequired={true}
-          />
+      <AuthMainContainer>
+        <AuthContainer>
+          <ToggleThemeButton />
+          <FormContainer>
+            <AuthTitle>登入</AuthTitle>
+            <FormInput
+              id="account"
+              label="帳號"
+              type="text"
+              placeholder="請輸入帳號"
+              onChange={(e) => handleInputOnChange("account", e.target.value)}
+              needFeedback={false}
+              isRequired={true}
+            />
+            <FormInput
+              id="password"
+              label="密碼"
+              type="password"
+              placeholder="請輸入密碼"
+              onChange={(e) => handleInputOnChange("password", e.target.value)}
+              needFeedback={false}
+              isRequired={true}
+            />
 
-          <AuthButton
-            type="submit"
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
-          >
-            登入
-          </AuthButton>
+            <AuthButton
+              type="submit"
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+            >
+              登入
+            </AuthButton>
+          </FormContainer>
+          <GoogleOAuthButton />
+          <Link to="/home">
+            <AuthButton>晚點再說，進入網站</AuthButton>
+          </Link>
           <AuthLink>
             還沒有帳號？　{"  "}
             <a href="/register" style={{ textDecoration: "underline" }}>
               註冊
             </a>
           </AuthLink>
-        </FormContainer>
-        <Link to="/home">
-          <AuthButton>晚點再說，進入網站</AuthButton>
-        </Link>
-      </AuthContainer>
-      <AuthBanner />
+        </AuthContainer>
+      </AuthMainContainer>
+      <AuthBannerContainer>
+        <AuthBanner />
+      </AuthBannerContainer>
     </AuthPage>
   );
 }

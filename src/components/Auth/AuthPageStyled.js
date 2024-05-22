@@ -7,33 +7,37 @@ export const AuthPage = styled.div`
   flex-direction: row;
 `;
 
-export const AuthContainer = styled.div`
+export const AuthMainContainer = styled.div`
   padding-top:10px;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
+  width: 50%;
+  height: 100%; 
+`;
+
+export const AuthContainer = styled.div`display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  width: 50%;
-  height: 100%;
-`;
-
-export const AuthBanner = styled.div`
-  position:fixed;
-  right:0;
+  width: 60%;
+  height: 100%; 
+`
+export const AuthBannerContainer = styled.div`
+  position:absolute;
+  right:0;  
   bottom:0;
   top:0;
+  width:50%;
+  height:100%;
+`
+
+export const AuthBanner = styled.div`
   background-image:url('https://iili.io/Ji5XFJ2.jpg');
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  display: flex;
-  width:50%;
+  width:100%;
   height:100%;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 `;
 
 export const AuthButton = styled.button`
@@ -43,6 +47,7 @@ export const AuthButton = styled.button`
   cursor: pointer;
   color: white;
   min-width: 300px;
+  height:40px;
   font-family: "Noto Sans TC", sans-serif;
   font-weight: bold;
   padding: 6px 0;

@@ -1,5 +1,5 @@
 export const lightTheme = {
-  body: '#F0F0F0	',
+  body: '#F0F0F0',
   text: '#363537',
   hoverText: `#363537`,
   toggleBorder: '#bcc9d6',
