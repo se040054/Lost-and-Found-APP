@@ -27,7 +27,10 @@ export default function RegisterPage() {
     confirmPassword: useRef(""),
     name: useRef(""),
   };
-  const { register } = useAuth();
+  const { register, isLogin } = useAuth();
+  if (isLogin === "success") {
+    navigate("/home");
+  }
   const [passwordMatch, setPasswordMatch] = useState(null);
   const handleInputOnChange = (attr) => {
     if (attr === "account") checkAccount(inputRef.account.current);

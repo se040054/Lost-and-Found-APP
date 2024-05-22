@@ -25,11 +25,14 @@ export default function LoginPage() {
     password: "",
   };
   const [form, setForm] = useState(defaultForm); // 不需要節點 所以只需用state
-  const { login } = useAuth();
+  const { login, isLogin } = useAuth();
+   if (isLogin === "success") {
+     navigate("/home");
+   }
   const handleInputOnChange = (attr, inputValue) => {
     setForm({ ...form, [attr]: inputValue });
   };
-
+ 
   const handleSubmit = async (e) => {
     e.stopPropagation();
     e.preventDefault();
