@@ -1,7 +1,15 @@
-import { Button, Card, CardGroup, Col, Row, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  CardGroup,
+  Col,
+  Container,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import Header from "../../components/Assists/Header";
 import { useEffect, useState } from "react";
-import { getSubmittedClaims } from "../../api/claims";
+import { deleteClaim, getSubmittedClaims } from "../../api/claims";
 import { defaultItemPhoto } from "../../assets";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,10 +23,11 @@ import {
   GoBackButton,
   NavigationToolContainer,
 } from "../../components/Assists/NavigationTool";
+import Swal from "sweetalert2";
 
 export default function SubmittedClaimPage() {
   const { isLogin } = useAuth();
-  const [claims, setClaims] = useState(null);
+  const [claims, setClaims] = useState([]);
   const [apiRes, setApiRes] = useState("loading");
   const navigate = useNavigate();
   useEffect(() => {
@@ -41,6 +50,9 @@ export default function SubmittedClaimPage() {
     if (isLogin === "false") navigate("/login");
     if (isLogin === "success") fetchClaims();
   }, [isLogin, navigate]);
+  const handleDelete = (claimId) => {
+    setClaims(claims.filter((claim) => claim.id !== claimId));
+  };
   return (
     <>
       <Header />
@@ -58,7 +70,10 @@ export default function SubmittedClaimPage() {
         </TitleContainer>
         <hr className="w-100" />
         {apiRes === "success" && (
-          <ClaimsContainer claims={claims}></ClaimsContainer>
+          <ClaimsContainer
+            claims={claims}
+            handleDelete={handleDelete}
+          ></ClaimsContainer>
         )}
         {apiRes === "false" && <h1>請稍後再試</h1>}
         {apiRes === "loading " && (
@@ -69,7 +84,7 @@ export default function SubmittedClaimPage() {
   );
 }
 
-const ClaimsContainer = ({ claims }) => {
+const ClaimsContainer = ({ claims, handleDelete }) => {
   return (
     <CardGroup className="w-100 m-0 p-0">
       {claims?.length > 0 && (
@@ -77,7 +92,10 @@ const ClaimsContainer = ({ claims }) => {
           {claims.map((claim) => {
             return (
               <Col className="w-100 m-0 p-0" key={claim.id}>
-                <ClaimWrapper claim={claim}></ClaimWrapper>
+                <ClaimWrapper
+                  claim={claim}
+                  handleDelete={handleDelete}
+                ></ClaimWrapper>
               </Col>
             );
           })}
@@ -92,13 +110,64 @@ const ClaimsContainer = ({ claims }) => {
   );
 };
 
-const ClaimWrapper = ({ claim }) => {
+const ClaimWrapper = ({ claim, handleDelete }) => {
+  const apiDeleteClaim = async (id) => {
+    try {
+      const data = await deleteClaim(id);
+      if (data.status === "success") {
+        handleDelete(claim.id);
+        Swal.fire({
+          title: "已撤銷認領",
+          icon: "success",
+          confirmButtonText: "繼續",
+        });
+      } else {
+        Swal.fire({
+          title: "撤銷認領失敗",
+          icon: "error",
+          confirmButtonText: "繼續",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "撤銷認領失敗",
+        icon: error.message,
+        confirmButtonText: "繼續",
+      });
+    }
+  };
+  const handleClick = async (id) => {
+    const result = await Swal.fire({
+      title: "確定要撤銷認領嗎",
+      text: "返回後對方將不會收到認領申請",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "撤銷",
+      confirmButtonColor: "#dc3545",
+      cancelButtonText: "取消",
+    });
+    if (result.isConfirmed) {
+      await apiDeleteClaim(id);
+    }
+    if (result.isDenied) return;
+  };
   const approveText = (state) => {
-    if (state === true) return <small className="text-success">認領成功</small>;
-    else if (state === false)
-      return <small className="text-danger">認領失敗</small>;
+    if (state === true) return <p className="text-success">認領成功</p>;
+    else if (state === false) return <p className="text-danger">認領失敗</p>;
     else if (state === null)
-      return <small className="text-muted">尚未回應</small>;
+      return (
+        <>
+          <Container className="m-0 p-0 d-flex align-items-center">
+            <p className="text-muted m-0 p-0 me-2">尚未回應</p>
+            <Button
+              className="btn btn-danger m-0"
+              onClick={() => handleClick?.(claim.id)}
+            >
+              取消認領
+            </Button>
+          </Container>
+        </>
+      );
   };
   function formatDate(rawDate) {
     // node 時間已經為UTC+8

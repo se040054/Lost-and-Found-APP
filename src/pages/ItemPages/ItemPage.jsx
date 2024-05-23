@@ -509,7 +509,7 @@ const CommentWrapper = ({ comment, refetch }) => {
       title: "確定刪除留言?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
+      confirmButtonColor: "#dc3545",
       confirmButtonText: "刪除",
       cancelButtonText: "取消",
     });

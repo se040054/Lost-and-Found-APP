@@ -64,3 +64,13 @@ export const putClaim = async ({ id, action }) => {
     return error
   }
 }
+
+export const deleteClaim = async (id) => {
+  try {
+    const { data } = await tokenInstance.delete(`${apiBaseURL}/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return error
+  }
+}
