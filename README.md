@@ -1,70 +1,132 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![JQEGaHJ.md.jpg](https://iili.io/JQEGaHJ.md.jpg)](https://freeimage.host/i/JQEGaHJ)
+- - -
+## 🔗‍線上網站
 
-## Available Scripts
+[前往線上網站](https://se040054.github.io/lost-and-found-app-deploy/home)
 
-In the project directory, you can run:
 
-### `npm start`
+* 若在網頁使用中出現訊號不佳或連線中斷情形導致跳出錯誤訊息，請登出後清除cookie及瀏覽紀錄後重新登入，否則資料可能無法正確顯示或操作失效
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🌟網站介紹
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+一個架構類似於電商的小型網站 
 
-### `npm test`
+為提供使用者刊登與協尋遺失物品
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+並且可對物品提出認領
 
-### `npm run build`
+主要使用套件、框架、工具：
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+前端：React、Bootstrap 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+後端：Express、Sequelize
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+資料庫：MySQL
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📷網站畫面
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+登入畫面
+[![登入畫面](https://iili.io/JQ1X0cF.md.jpg)](https://freeimage.host/i/JQ1X0cF)
+首頁
+[![首頁](https://iili.io/JQ1X18g.md.jpg)](https://freeimage.host/i/JQ1X18g)
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+## 📌網站功能
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+大部分的功能需要登入後才能使用，進入網站前建議登入。
 
-### Analyzing the Bundle Size
+- 使用者： 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+    - 註冊會員
+    - 登入會員
+    - 使用Google帳戶登入
+        >>>(需允許彈出視窗，會擷取使用者的名稱，照片，信箱)
+    - 使用者資料總覽
+    - 編輯使用者資訊
+    - 修改密碼
+    - 刊登物品
+    - 創建商家
+        >>>(一個人只能五個)
+    - 查看自己的收藏
+        >>>(不能看其他使用者的)
 
-### Making a Progressive Web App
+>為了增加物品的遺失詳細情形與方便辨認位置，提供使用者新增商家資訊。
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- 商家：
 
-### Advanced Configuration
+    - 創建商家
+    - 商家資訊總覽
+    - 創建者可以編輯商家資訊
+    - 創建者可以刪除商家
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- 物品：
 
-### Deployment
+    - 物品資訊總覽
+    - 刊登者編輯物品資訊
+    - 刊登者可以刪除物品
+    - 提出認領申請
+    - 收藏／取消收藏物品
+    - 對物品留言
+    - 刪除自己的留言
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- 認領：
+    - 查看申請的認領列表
+    - 若申請未回應，可以取消申請
+    - 查看收到的認領申請列表
+    - 對未回應的申請提交批准或拒絕
+        >>>(若批准申請，則自動回絕其他對相同物品的申請)
 
-### `npm run build` fails to minify
+- 其他功能:
+    - 導覽小工具
+    - 返回首頁 
+    - 返回頂端
+    - 返回上一頁
+    - 除了首頁以外的地方，顯示返回首頁
+    - 切換暗黑模式 
+    [![JQ16yzB.md.gif](https://iili.io/JQ16yzB.gif)](切換)
+    
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 本地使用
+
+此應用須配合API使用:
+
+```bash
+　Fork 專案
+
+  $ git clone https://github.com/se040054/Lost-and-Found-APP
+  
+  切換目錄
+  $ cd lost-and-found-app 
+
+　安裝套件
+  $ npm install 
+
+　啟動專案
+  $ npm start
+
+  如果遇到錯誤，嘗試清理緩存：
+  $ npm cache clean --force
+
+　停止執行
+　Ctrl + C
+
+```
+
+
+    
+## 主要使用套件
+
+- axios
+- bootstrap
+- react
+- react-bootstrap
+- styled-components
+- sweetalert2
+- @react-oauth/google
+
