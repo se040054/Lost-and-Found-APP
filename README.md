@@ -98,6 +98,8 @@
 ## 本地使用
 
 此應用須配合API使用:
+[前往API repo ](https://github.com/se040054/Lost-and-Found-API)
+
 
 ```bash
 　Fork 專案
