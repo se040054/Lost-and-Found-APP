@@ -5,6 +5,11 @@
 
 [前往線上網站](https://se040054.github.io/lost-and-found-app-deploy/home)
 
+試用帳號 :
+ 
+帳號：user1   (~user30)
+
+密碼：asd123
 
 * 若在網頁使用中出現訊號不佳或連線中斷情形導致跳出錯誤訊息，請登出後清除cookie及瀏覽紀錄後重新登入，否則資料可能無法正確顯示或操作失效
 
@@ -95,7 +100,7 @@
     [![JQ16yzB.md.gif](https://iili.io/JQ16yzB.gif)](切換)
     
 
-## 本地使用
+## 💻本地使用
 
 此應用須配合API使用:
 [前往API repo ](https://github.com/se040054/Lost-and-Found-API)
@@ -125,7 +130,7 @@
 
 
     
-## 主要使用套件
+## 📐主要使用套件
 
 - axios
 - bootstrap
