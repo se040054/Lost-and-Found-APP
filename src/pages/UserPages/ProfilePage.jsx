@@ -132,12 +132,9 @@ const InformationContainer = ({ profile, currentMemberId }) => {
         </InfoRow>
       </Container>
       {profile?.id === currentMemberId && (
-        <Button
-          className="btn btn-success w-75"
-          href={`/users/${currentMemberId}/edit`}
-        >
-          編輯資料
-        </Button>
+        <Link to={`/users/${currentMemberId}/edit`}>
+          <Button className="btn btn-success">編輯資料</Button>
+        </Link>
       )}
     </InformationContainerStyled>
   );
@@ -249,7 +246,7 @@ const MerchantWrapper = ({ merchant }) => {
     <Link to={`/merchants/${merchant.id}`}>
       <Card fluid className="mb-3">
         <Row fluid>
-          <Col md={4}>
+          <Col md={3}>
             <Card.Img
               src={merchant.logo || defaultMerchantLogo}
               alt="..."
@@ -260,7 +257,7 @@ const MerchantWrapper = ({ merchant }) => {
               }}
             />
           </Col>
-          <Col md={8}>
+          <Col md={9}>
             <Card.Body>
               <Card.Title>{merchant.name}</Card.Title>
               <Card.Text>

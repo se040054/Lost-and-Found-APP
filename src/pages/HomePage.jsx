@@ -377,7 +377,7 @@ const ItemsWrapper = ({ item }) => {
       <Card.Header variant="top">
         {/* variant 會讓radius自動適應 */}
         {item.Merchant ? (
-          <a href={`/merchants/${item.Merchant.id}`}>
+          <Link to={`/merchants/${item.Merchant.id}`}>
             <Image
               src={item.Merchant.logo || defaultMerchantLogo}
               alt="logo"
@@ -390,9 +390,9 @@ const ItemsWrapper = ({ item }) => {
               }}
             />
             <small>{item.Merchant.name} </small>
-          </a>
+          </Link>
         ) : (
-          <a href={`/users/${item.User.id}`}>
+          <Link to={`/users/${item.User.id}`}>
             <Image
               src={item.User.avatar || defaultAvatar}
               alt="avatar"
@@ -404,10 +404,9 @@ const ItemsWrapper = ({ item }) => {
                 zIndex: "2",
               }}
             />
-
             <small>{item.User.name}</small>
-          </a>
-        )}{" "}
+          </Link>
+        )}
         <Card.Text>
           <small className="text-muted ">
             張貼於：{formatDate(item.createdAt)}

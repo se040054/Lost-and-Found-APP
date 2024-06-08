@@ -70,7 +70,6 @@ export default function MerchantInfoPage() {
     if (result.isConfirmed) {
       try {
         const data = await deleteMerchant(merchant.id);
-
         if (data.status === "success") {
           Swal.fire({
             title: "已刪除!",
@@ -165,12 +164,10 @@ const InformationContainer = ({ merchant, currentMemberId, handleDelete }) => {
       </Container>
       {merchant.userId === currentMemberId && (
         <Container className="m-u p-0 d-flex justify-content-between">
-          <Button
-            className="btn btn-success"
-            href={`/merchants/${merchant.id}/edit`}
-          >
-            編輯商家資料
-          </Button>
+          <Link to={`/merchants/${merchant.id}/edit`}>
+            <Button className="btn btn-success">編輯商家資料</Button>
+          </Link>
+
           <Button className="btn btn-danger" onClick={(e) => handleDelete?.()}>
             刪除商家
           </Button>
